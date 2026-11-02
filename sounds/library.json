@@ -1,0 +1,119 @@
+[
+ {
+  "id": "boom",
+  "name": "Boom",
+  "category": "Hit",
+  "description": "A deep, punchy boom. The classic meme punch on a punchline.",
+  "use": "Any punchline pop-in, exactly on the beat",
+  "seconds": 2.6,
+  "file": "sfx/boom.wav"
+ },
+ {
+  "id": "horror-hit",
+  "name": "Horror hit",
+  "category": "Horror",
+  "description": "Screeching strings and a low slam, like a jump scare.",
+  "use": "Shocked reveals: \"Photos: 118 GB 💀\", the ex in the photo",
+  "seconds": 4.8,
+  "file": "sfx/horror-hit.wav"
+ },
+ {
+  "id": "suspense-rise",
+  "name": "Suspense rise",
+  "category": "Horror",
+  "description": "A dark drone that swells for 3 seconds, ending where the hit should land.",
+  "use": "Start ~3 s before a horror hit or boom",
+  "seconds": 4.5,
+  "file": "sfx/suspense-rise.wav"
+ },
+ {
+  "id": "sad-piano",
+  "name": "Sad piano",
+  "category": "Sad",
+  "description": "A slow, lonely piano phrase in A minor.",
+  "use": "Crying, \"Storage Full\" at the best moment, deleting the ex",
+  "seconds": 7.5,
+  "file": "sfx/sad-piano.wav"
+ },
+ {
+  "id": "sad-violin",
+  "name": "Sad violin",
+  "category": "Sad",
+  "description": "One long, wobbly violin note that sinks at the end.",
+  "use": "Defeated faces, \"I give up\", tiny violin moments",
+  "seconds": 5.2,
+  "file": "sfx/sad-violin.wav"
+ },
+ {
+  "id": "smooth-sax",
+  "name": "Smooth sax, getting louder",
+  "category": "Sax",
+  "description": "A sultry saxophone phrase that keeps getting louder.",
+  "use": "Strut, side-eye, smug or \"main character\" moments",
+  "seconds": 7.8,
+  "file": "sfx/smooth-sax.wav"
+ },
+ {
+  "id": "fail-trumpet",
+  "name": "Fail trumpet",
+  "category": "Fail",
+  "description": "Wah, wah, wah, waaah: four sinking notes.",
+  "use": "Picture fails, jump shots, \"it's a plastic bag\"",
+  "seconds": 4.6,
+  "file": "sfx/fail-trumpet.wav"
+ },
+ {
+  "id": "record-scratch",
+  "name": "Record scratch",
+  "category": "Hit",
+  "description": "A needle scratch that stops everything.",
+  "use": "\"Wait, what?\" moments; cut right before a reveal",
+  "seconds": 0.7,
+  "file": "sfx/record-scratch.wav"
+ },
+ {
+  "id": "whoosh",
+  "name": "Whoosh",
+  "category": "Transition",
+  "description": "A soft air swipe.",
+  "use": "Text sliding in, scene changes",
+  "seconds": 1.2,
+  "file": "sfx/whoosh.wav"
+ },
+ {
+  "id": "pop",
+  "name": "Pop",
+  "category": "Transition",
+  "description": "A short bubbly pop.",
+  "use": "Small text pop-ins, emojis appearing",
+  "seconds": 0.65,
+  "file": "sfx/pop.wav"
+ },
+ {
+  "id": "ding",
+  "name": "Ding",
+  "category": "Success",
+  "description": "A bright bell ding.",
+  "use": "\"Storage freed\" numbers, Keep logo moments",
+  "seconds": 2.8,
+  "file": "sfx/ding.wav"
+ },
+ {
+  "id": "victory",
+  "name": "Victory fanfare",
+  "category": "Success",
+  "description": "A short brassy ta-da with a bell.",
+  "use": "Dance and cleanup payoff reels",
+  "seconds": 3.6,
+  "file": "sfx/victory.wav"
+ },
+ {
+  "id": "tick-tock",
+  "name": "Tick tock",
+  "category": "Tension",
+  "description": "A clock ticking for 4 seconds.",
+  "use": "Scrolling forever, \"weekend #87\", waiting moments",
+  "seconds": 4.8,
+  "file": "sfx/tick-tock.wav"
+ }
+]

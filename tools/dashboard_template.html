@@ -125,6 +125,17 @@ details.tlx summary{cursor:pointer;font-weight:600;color:var(--accent)}
 .st-ready{background:var(--sunk);color:var(--muted)}
 .st-need{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
 .empty{color:var(--muted);padding:30px 0}
+.cues{display:flex;gap:4px;flex-wrap:wrap}
+.cue{font:500 11px var(--mono);background:var(--sunk);color:var(--muted);border-radius:6px;padding:3px 6px}
+.tracks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card p{margin:0;font-size:13.5px}
+.card .k{font-size:12px;color:var(--muted)}
+.card a{color:var(--accent)}
+.sfx{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+audio{width:100%;height:36px}
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;align-items:end}
+.addform input{font:14px var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
 .badges{display:flex;gap:6px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:600;font-size:13px;padding:8px 14px;border-radius:99px;z-index:20}
 @media (max-width:760px){
@@ -153,7 +164,7 @@ details.tlx summary{cursor:pointer;font-weight:600;color:var(--accent)}
 <script>
 // ---------- state ----------
 let DATA = null;                 // from data.json
-let EDITS = {clips:{}, reels:{}}; // from the dashboard database
+let EDITS = {clips:{}, reels:{}, tracks:{}, custom:{}}; // from the dashboard database
 let db = null, canWrite = false;
 let reelFilter = "all", planFilter = "all";
 const openItems = new Set();
@@ -175,7 +186,7 @@ const promptOf = t => clipEdit(t.id).prompt || t.prompt;
 
 async function saveEdit(coll, id, patch){
   if (!db || !canWrite) return;
-  const cur = (coll === "clip_requests" ? EDITS.clips : EDITS.reels)[id] || {};
+  const cur = ({clip_requests: EDITS.clips, reel_tracking: EDITS.reels, track_notes: EDITS.tracks, tracks_custom: EDITS.custom}[coll] || {})[id] || {};
   const body = {...cur, ...patch, updatedAt: new Date().toISOString()};
   for (const k of Object.keys(body)) if (body[k] === null) delete body[k];
   try { await db.collection(coll).doc(id).set(body); toast("Saved"); }
@@ -189,31 +200,34 @@ async function connect(){
   const w = user ? await user.can("data.write") : null;
   canWrite = w !== false;
   $("sync").textContent = canWrite ? "Edits save automatically" : "View only";
-  let loaded = 0; const timer = setTimeout(() => { if (loaded < 2) $("sync").textContent = "Saved edits can't be reached yet"; }, 10000);
+  let loaded = 0; const timer = setTimeout(() => { if (loaded < 4) $("sync").textContent = "Saved edits can't be reached yet"; }, 10000);
   const sub = (coll, key) => db.collection(coll).onSnapshot(snap => {
     const m = {}; snap.docs.forEach(d => { if (d.exists) m[d.id] = d.data(); });
-    EDITS[key] = m; if (!snap.metadata.fromCache && ++loaded >= 2) clearTimeout(timer);
+    EDITS[key] = m; if (!snap.metadata.fromCache && ++loaded >= 4) clearTimeout(timer);
     if (!isTyping()) show();
   }, () => { clearTimeout(timer); $("sync").textContent = "Saved edits unavailable"; });
-  sub("clip_requests", "clips"); sub("reel_tracking", "reels");
+  sub("clip_requests", "clips"); sub("reel_tracking", "reels"); sub("track_notes", "tracks"); sub("tracks_custom", "custom");
 }
 const isTyping = () => { const a = document.activeElement; return a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT"); };
 
 // ---------- views ----------
 function views(){ return [
   ["overview","Overview"],["reels","Reels",DATA.reels.length],["clips","Base clips",DATA.clips.length],
-  ["to-make","To make",DATA.tomake.filter(t=>statusOf(t.id)!=="done").length],["backgrounds","Backgrounds",DATA.bgs.length],["plan","30-day plan",DATA.plan.length]]; }
+  ["to-make","To make",DATA.tomake.filter(t=>statusOf(t.id)!=="done").length],["sounds","Sounds",DATA.sounds.length + DATA.trending.tracks.length],["backgrounds","Backgrounds",DATA.bgs.length],["plan","30-day plan",DATA.plan.length]]; }
 function nav(cur){
   $("nav").innerHTML = views().map(([k,l,n]) => `<a href="#${k}" ${k===cur?'aria-current="page"':""}>${l}${n!=null?`<span class="n">${n}</span>`:""}</a>`).join("");
 }
 const video = (src, poster) => `<video controls playsinline preload="none" poster="${poster}" src="${src}"></video>`;
 const P = () => DATA.pillars;
+const sfxName = id => (DATA.sounds.find(s => s.id === id) || {name:id}).name;
+const TRACK_STATUS = [["untested","Not tried yet"],["works","Works on our account"],["blocked","Not available to us"]];
 
 function reelCard(r){
   const e = reelEdit(r.num);
   const track = db ? `<div class="track">
       <label><input type="checkbox" data-posted="${r.num}" ${e.posted?"checked":""} ${canWrite?"":"disabled"}> Posted</label>
       <label>Views <input type="number" min="0" inputmode="numeric" id="views-${r.num}" data-views="${r.num}" value="${e.views ?? ""}" ${canWrite?"":"disabled"}></label>
+      <input type="text" id="rtrack-${r.num}" data-rtrack="${r.num}" value="${esc(e.track||"")}" placeholder="Track used in IG" style="font:12.5px var(--body);padding:5px 7px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);flex:1;min-width:120px" ${canWrite?"":"disabled"}>
       <textarea id="rnote-${r.num}" data-rnote="${r.num}" rows="1" placeholder="Notes" ${canWrite?"":"disabled"}>${esc(e.notes||"")}</textarea>
     </div>` : "";
   return `<article class="reel" style="--c:var(--${r.pillar})">
@@ -222,6 +236,7 @@ function reelCard(r){
     <div class="hook">${esc(r.hook)}</div>
     ${r.punch?`<div class="punch">→ ${esc(r.punch)}</div>`:""}
     <div class="meta"><span>Hamster: <b>${esc(pretty(r.clip))}</b></span><span>Background: <b>${esc(r.bgname)}</b></span></div>
+    ${r.sounds && r.sounds.length ? `<div class="cues">${r.sounds.map(c => `<span class="cue">🔊 ${esc(sfxName(c.sound))} ${c.at}s</span>`).join("")}</div>` : ""}
     ${track}
   </article>`;
 }
@@ -315,6 +330,38 @@ const render = {
         <li>Upload to the repo's <b>base-clips/</b> folder with the suggested name, then set the status to Done.</li>
       </ul></div>`;
   },
+  sounds(){
+    const tr = DATA.trending, dis = canWrite ? "" : "disabled";
+    const trackCard = (t, custom) => { const n = (custom ? EDITS.custom[t.id] : EDITS.tracks[t.id]) || {}; const st = custom ? (t.status||"untested") : (n.status||"untested");
+      const coll = custom ? "tracks_custom" : "track_notes";
+      return `<article class="card">
+        <div class="badges"><span class="pill ${t.kind==="Evergreen meme"?"p-up":custom?"p-nice":"p-green"}">${esc(t.kind||"Added by you")}</span>${st==="works"?'<span class="pill s-done">Works for us</span>':st==="blocked"?'<span class="pill s-redo">Not available</span>':""}</div>
+        <h3>${esc(t.title)}</h3>${t.artist?`<span class="k">${esc(t.artist)}</span>`:""}
+        ${t.trend?`<p>${esc(t.trend)}</p>`:""}
+        ${t.fit?`<p><b>Use it for:</b> ${esc(t.fit)}</p>`:""}
+        ${t.source?`<span class="k"><a href="${t.source}" target="_blank" rel="noopener">Where this trend was reported</a></span>`:""}
+        ${db?`<div class="ctrls"><select aria-label="Status of ${esc(t.title)}" data-tstatus="${t.id}" data-coll="${coll}" ${dis}>${TRACK_STATUS.map(([k,l]) => `<option value="${k}" ${st===k?"selected":""}>${l}</option>`).join("")}</select></div>
+        <textarea rows="1" id="tn-${t.id}" data-tnote="${t.id}" data-coll="${coll}" placeholder="Notes: which reels, how it did" ${dis}>${esc((custom?t.notes:n.notes)||"")}</textarea>`:""}
+      </article>`; };
+    const custom = Object.entries(EDITS.custom).map(([id, d]) => ({id, ...d, kind: "Added by you"}));
+    const cats = [...new Set(DATA.sounds.map(s => s.category))];
+    return `<h2>Trending tracks</h2>
+      <p class="lede">${esc(tr.note)} List checked ${esc(tr.checked)}. Our reels are exactly 10 seconds, with the punchline at the beat, so line the track's drop up with that moment. Turn our sound effects down rather than off, so the boom still lands under the music.</p>
+      <div class="tracks">${tr.tracks.map(t => trackCard(t,false)).join("")}${custom.map(t => trackCard(t,true)).join("")}</div>
+      ${db&&canWrite?`<h2 style="font-size:16px">Add a track you've seen trending</h2>
+      <form class="addform" id="addtrack"><label class="f" for="nt-title">Track<input id="nt-title" required placeholder="Song or sound name"></label>
+        <label class="f" for="nt-artist">Artist or creator<input id="nt-artist" placeholder="Optional"></label>
+        <label class="f" for="nt-fit">Use it for<input id="nt-fit" placeholder="Which reels or emotions"></label>
+        <button class="btn primary" type="submit">Add track</button></form>`:""}
+      <h2>Our sound effects</h2>
+      <p class="lede">Made from scratch for Keep, so they're free to use anywhere, ads included. Every reel already has them mixed in at its beat.</p>
+      ${cats.map(c => `<h2 style="font-size:16px;margin-top:18px">${esc(c)}</h2><div class="sfx">${DATA.sounds.filter(s=>s.category===c).map(s => `<article class="card">
+        <h3>${esc(s.name)} <span class="k">${s.seconds}s</span></h3>
+        <audio controls preload="none" src="media/sounds/${s.id}.mp3"></audio>
+        <p>${esc(s.description)}</p><p class="k">Best for: ${esc(s.use)}</p>
+        <span class="k">${s.reels.length?`In reels ${s.reels.map(n=>"#"+n).join(", ")}`:"Not used yet"} · file <span class="num">sounds/sfx/${esc(s.id)}.wav</span></span>
+      </article>`).join("")}</div>`).join("")}`;
+  },
   backgrounds(){
     return `<h2>Backgrounds</h2><p class="lede">All free for commercial use. Add more to the repo's backgrounds/ folder.</p>
       <div class="bgs">${DATA.bgs.map(b => `<article class="bg">
@@ -370,6 +417,13 @@ function show(){
   document.querySelectorAll("[data-posted]").forEach(c => c.onchange = () => saveEdit("reel_tracking", c.dataset.posted, {posted: c.checked}));
   document.querySelectorAll("[data-views]").forEach(i => i.onchange = () => saveEdit("reel_tracking", i.dataset.views, {views: i.value === "" ? null : Number(i.value)}));
   document.querySelectorAll("[data-rnote]").forEach(n => n.onchange = () => saveEdit("reel_tracking", n.dataset.rnote, {notes: n.value}));
+  document.querySelectorAll("[data-rtrack]").forEach(n => n.onchange = () => saveEdit("reel_tracking", n.dataset.rtrack, {track: n.value}));
+  document.querySelectorAll("[data-tstatus]").forEach(s => s.onchange = () => saveEdit(s.dataset.coll, s.dataset.tstatus, {status: s.value}));
+  document.querySelectorAll("[data-tnote]").forEach(n => n.onchange = () => saveEdit(n.dataset.coll, n.dataset.tnote, {notes: n.value}));
+  const f = $("addtrack"); if (f) f.onsubmit = async ev => { ev.preventDefault();
+    const title = $("nt-title").value.trim(); if (!title) return;
+    const id = title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60) + "-" + Date.now().toString(36);
+    await saveEdit("tracks_custom", id, {title, artist: $("nt-artist").value.trim(), fit: $("nt-fit").value.trim(), status: "untested"}); };
 }
 window.addEventListener("hashchange", () => { show(); window.scrollTo(0,0); });
 document.addEventListener("focusout", () => setTimeout(() => { if (!isTyping()) show(); }, 0));

@@ -78,7 +78,15 @@ def main():
     reels = [dict(file=r[0], num=r[0].split("_")[2], pillar=r[1], hook=r[2], punch=r[3], clip=r[4],
                   bg=r[5], bgname=BG[r[5]][0] if r[5] else "Original scene", plan=r[6]) for r in REELS]
     bgs = [dict(key=k, name=v[0], license=v[1], url=v[2], used=[r[0] for r in REELS if r[5] == k]) for k, v in BG.items()]
-    data = dict(clips=clips, reels=reels, plan=plan, pillars=PILLARS, bgs=bgs,
+    snd = os.path.join(HERE, "..", "sounds")
+    library = json.load(open(os.path.join(snd, "library.json")))
+    cues = json.load(open(os.path.join(snd, "reel_sounds.json")))
+    trending = json.load(open(os.path.join(snd, "trending_tracks.json")))
+    for r in reels:
+        r["sounds"] = cues.get(r["file"], [])
+    for s_ in library:
+        s_["reels"] = [r["num"] for r in reels if any(c["sound"] == s_["id"] for c in r["sounds"])]
+    data = dict(clips=clips, reels=reels, sounds=library, trending=trending, plan=plan, pillars=PILLARS, bgs=bgs,
                 tomake=[dict(id=c["id"], name=c["name"], why=c["why"], priority=c["priority"], kind=c["kind"],
                              beat=c["beat"], file=c["file"], prompt=prompt_for(c)) for c in TO_MAKE_CLIPS],
                 refs=[dict(file=f, caption=cap) for f, cap in REFERENCES],

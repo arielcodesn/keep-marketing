@@ -51,3 +51,9 @@ Keep Reel Studio (private Claude artifact): https://claude.ai/artifact/KEecvdKom
 ## Generator prompts and references
 
 `plan/clip_prompts.py` holds one shared CHARACTER / SETUP / AVOID block plus a 10-second action timeline per clip. `base-clips/reference/` holds the six reference images (front, side, back, holding phone, cap-logo and shirt close-ups) to attach to every generation.
+
+## Sounds
+
+- `sounds/synth.py` makes our original sound effects (`sounds/sfx/*.wav`, described in `sounds/library.json`). They are synthesised from scratch, so they're free to use in organic posts and ads.
+- `sounds/reel_sounds.json` lists the cues per reel (sound, second, volume). `python3 -I tools/sound_mix.py [reel numbers]` replaces each reel's audio with those cues.
+- `sounds/trending_tracks.json` is the researched list of trending/meme tracks shown in the studio's Sounds tab. Licensed tracks are added inside Instagram when posting; mark in the studio which ones work on the account.

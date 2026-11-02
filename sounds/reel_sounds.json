@@ -1,0 +1,280 @@
+{
+ "keep_reel_01_concert_filming-47-minutes": [
+  {
+   "sound": "smooth-sax",
+   "at": 0.2,
+   "volume": 0.8
+  },
+  {
+   "sound": "record-scratch",
+   "at": 2.4,
+   "volume": 0.8
+  },
+  {
+   "sound": "sad-violin",
+   "at": 2.7,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_02_concert_312-photos-of-stage": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "fail-trumpet",
+   "at": 2.5,
+   "volume": 0.85
+  }
+ ],
+ "keep_reel_03_concert_cleared-8gb-payoff": [
+  {
+   "sound": "victory",
+   "at": 0.2,
+   "volume": 0.85
+  },
+  {
+   "sound": "ding",
+   "at": 5.0,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_04_living_118gb-photos": [
+  {
+   "sound": "suspense-rise",
+   "at": 0.0,
+   "volume": 0.8
+  },
+  {
+   "sound": "horror-hit",
+   "at": 2.8,
+   "volume": 0.95
+  }
+ ],
+ "keep_reel_05_living_airdrop-400-photos": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "boom",
+   "at": 3.0,
+   "volume": 0.95
+  },
+  {
+   "sound": "sad-violin",
+   "at": 3.4,
+   "volume": 0.75
+  }
+ ],
+ "keep_reel_06_living_2016-emo-phase": [
+  {
+   "sound": "tick-tock",
+   "at": 0.0,
+   "volume": 0.7
+  },
+  {
+   "sound": "horror-hit",
+   "at": 3.0,
+   "volume": 0.95
+  }
+ ],
+ "keep_reel_07_beach_icloud-full-day-1": [
+  {
+   "sound": "boom",
+   "at": 1.5,
+   "volume": 0.95
+  },
+  {
+   "sound": "sad-piano",
+   "at": 2.0,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_08_beach_1204-photos-3-good": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "fail-trumpet",
+   "at": 3.5,
+   "volume": 0.85
+  }
+ ],
+ "keep_reel_09_desk_find-id-in-38000-screenshots": [
+  {
+   "sound": "tick-tock",
+   "at": 0.0,
+   "volume": 0.7
+  },
+  {
+   "sound": "boom",
+   "at": 5.5,
+   "volume": 0.95
+  },
+  {
+   "sound": "sad-violin",
+   "at": 6.0,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_10_desk_icloud-upgrade-dog-pics": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "boom",
+   "at": 5.5,
+   "volume": 0.95
+  },
+  {
+   "sound": "sad-violin",
+   "at": 8.3,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_11_mountain_hiked-4-hours-600-photos": [
+  {
+   "sound": "smooth-sax",
+   "at": 0.3,
+   "volume": 0.85
+  },
+  {
+   "sound": "ding",
+   "at": 7.6,
+   "volume": 0.6
+  }
+ ],
+ "keep_reel_12_pier_2941-photos-today": [
+  {
+   "sound": "suspense-rise",
+   "at": 1.0,
+   "volume": 0.8
+  },
+  {
+   "sound": "horror-hit",
+   "at": 4.0,
+   "volume": 0.95
+  }
+ ],
+ "keep_reel_13_lake_dad-37-photos-of-thumb": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "record-scratch",
+   "at": 4.8,
+   "volume": 0.8
+  },
+  {
+   "sound": "fail-trumpet",
+   "at": 5.1,
+   "volume": 0.85
+  }
+ ],
+ "keep_reel_14_dunes_52-pics-blinking": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "boom",
+   "at": 5.0,
+   "volume": 0.95
+  },
+  {
+   "sound": "fail-trumpet",
+   "at": 5.5,
+   "volume": 0.75
+  }
+ ],
+ "keep_reel_15_valley_aesthetic-pics-posted-0": [
+  {
+   "sound": "pop",
+   "at": 0.2,
+   "volume": 0.7
+  },
+  {
+   "sound": "record-scratch",
+   "at": 4.8,
+   "volume": 0.8
+  },
+  {
+   "sound": "sad-piano",
+   "at": 5.1,
+   "volume": 0.85
+  }
+ ],
+ "keep_reel_16_dance_deleted-4000-screenshots": [
+  {
+   "sound": "victory",
+   "at": 0.2,
+   "volume": 0.85
+  },
+  {
+   "sound": "whoosh",
+   "at": 6.0,
+   "volume": 0.8
+  },
+  {
+   "sound": "ding",
+   "at": 8.0,
+   "volume": 0.7
+  }
+ ],
+ "keep_reel_17_summit_deleted-4000-screenshots": [
+  {
+   "sound": "victory",
+   "at": 0.2,
+   "volume": 0.85
+  },
+  {
+   "sound": "whoosh",
+   "at": 6.0,
+   "volume": 0.8
+  },
+  {
+   "sound": "ding",
+   "at": 8.0,
+   "volume": 0.7
+  }
+ ],
+ "keep_reel_18_flower_deleted-4000-screenshots": [
+  {
+   "sound": "victory",
+   "at": 0.2,
+   "volume": 0.85
+  },
+  {
+   "sound": "whoosh",
+   "at": 6.0,
+   "volume": 0.8
+  },
+  {
+   "sound": "ding",
+   "at": 8.0,
+   "volume": 0.7
+  }
+ ],
+ "keep_reel_19_pier_vacation-1-2gb-left": [
+  {
+   "sound": "smooth-sax",
+   "at": 0.3,
+   "volume": 0.9
+  },
+  {
+   "sound": "record-scratch",
+   "at": 8.0,
+   "volume": 0.6
+  }
+ ]
+}
