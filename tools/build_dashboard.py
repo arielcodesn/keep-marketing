@@ -55,11 +55,11 @@ REELS = [
     ("keep_reel_22_dunes_jump-shot-attempt-48", "fails", "Jump shot attempt #48 🏜️", "Finally nailed it. Retiring now 😌", "green_strut-turn_fullbody", "desert-dunes", None),
     ("keep_reel_23_party_only-good-group-photo", "life", "Walking away after taking the ONLY good group photo 📸", "Photographer of the year 🏆", "green_strut-turn_fullbody", "house-party-a", None),
     ("keep_reel_24_bedroom_deleted-200-photos-of-ex", "life", "Me after finally deleting 200 photos of my ex 🫡", "Storage: freed. Heart: also freed ✨", "green_strut-turn_fullbody", "bedroom-night-a", None),
-    ("keep_reel_25_japan_steps-and-photos-day-3", "travel", "Japan trip with my girlfriend, day 3 ⛩️ · Steps 31,482 · Photos 4,206", "Photos of me: 2 😐", "green_couple-phones-swap_fullbody", "city-dusk-a", None),
-    ("keep_reel_26_japan-crossing_600-identical-photos", "travel", "Couples in Japan: 1 street, 2 phones, 600 identical photos 📸", "", "green_couple-phones-swap_fullbody", "city-dusk-b", None),
-    ("keep_reel_27_airport_only-a-few-photos", "travel", "Her: \"I'll only take a few photos this trip\" ✈️", "Her camera roll before we even board: 1,107 📸", "green_couple-phones-swap_fullbody", "airport-gate-b", None),
-    ("keep_reel_28_pier_312-sunset-photos", "fails", "Our trip: 312 photos of the same sunset. Both of us with eyes open in: 0 🌅", "", "green_couple-phones-swap_fullbody", "pier-sunset", None),
-    ("keep_reel_29_hotel_delete-bad-trip-photos", "storage", "Hotel, 1am: \"let's delete the bad trip photos\" 🫠", "Deleted: 0. Kept: 4,000 😌", "green_couple-phones-swap_fullbody", "bedroom-night-a", None),
+    ("keep_reel_25_japan_steps-and-photos-day-3", "travel", "Day 1 in Tokyo with my girlfriend ⛩️ · Steps 31,204 · Photos 1,206", "Her: 1,204 photos · Him: 2. Both from behind. 😐", "green_couple-phones-swap_fullbody", "city-dusk-a", None),
+    ("keep_reel_26_japan-crossing_600-identical-photos", "travel", "Shibuya crossing 🚦 Her: again, you blinked · Him: crossed it 6 times", "", "green_couple-phones-swap_fullbody", "city-dusk-b", None),
+    ("keep_reel_27_airport_only-a-few-photos", "travel", "Japan trip, day 0. We're at the gate. ✈️", "Her camera roll already: 1,107 📸 · 214 are of the plane", "green_couple-phones-swap_fullbody", "airport-gate-b", None),
+    ("keep_reel_28_pier_312-sunset-photos", "fails", "She took 312 photos of the sunset. The sunset was 4 minutes long. 🌅", "", "green_couple-phones-swap_fullbody", "pier-sunset", None),
+    ("keep_reel_29_hotel_delete-bad-trip-photos", "storage", "Hotel, 1am. Let's delete the bad trip photos 🫠", "Him: deleted 212 · Her: deleted 0 · 38 Lawson egg sandwich photos: memories 🥪", "green_couple-phones-swap_fullbody", "bedroom-night-a", None),
 ]
 
 from clip_prompts import CLIPS as TO_MAKE_CLIPS, REFERENCES, prompt_for
