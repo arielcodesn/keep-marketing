@@ -4,34 +4,44 @@
   "key_lo": 25,
   "key_hi": 70,
   "bg_blur": 2.0,
-  "fg_scale": 0.7,
+  "fg_scale": 0.72,
   "fg_anchor_y": 1243,
-  "fg_offset_x": -40,
-  "shadow_strength": 0.6,
+  "fg_offset_x": 0,
+  "shadow_strength": 0.65,
   "out": "reels/keep_reel_29_hotel_delete-bad-trip-photos.mp4",
   "background": "backgrounds/stock/bedroom-night-a.jpg",
   "bg_focus_x": 0.6,
   "work": "/tmp/claude-0/-home-claude/1691a066-b71d-519f-82cc-823b9ea3f658/scratchpad/work_29",
   "layers": [
     {
-      "text": "Hotel, 1am: \"let's delete the bad trip photos\" 🫠",
+      "text": "Hotel, 1am. \"Let's delete the bad trip photos\" 🫠",
       "start": 0,
       "y": 250,
       "style": "outline",
-      "size": 64,
-      "align": "left",
-      "x": 70,
-      "maxw": 820
-    },
-    {
-      "text": "Deleted: 0. Kept: 4,000 😌",
-      "start": 5.5,
-      "y": null,
-      "style": "box",
       "size": 60,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
+    },
+    {
+      "text": "Him: deleted 212 🗑️\nHer: deleted 0. \"They're all memories\" 😌",
+      "start": 4.5,
+      "y": null,
+      "style": "box",
+      "size": 52,
+      "align": "left",
+      "x": 70,
+      "maxw": 840
+    },
+    {
+      "text": "The 38 photos of a Lawson egg sandwich: memories 🥪",
+      "start": 8.3,
+      "y": null,
+      "style": "box",
+      "size": 52,
+      "align": "left",
+      "x": 70,
+      "maxw": 840
     }
   ]
 }

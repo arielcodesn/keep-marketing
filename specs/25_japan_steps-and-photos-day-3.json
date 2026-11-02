@@ -4,37 +4,37 @@
   "key_lo": 25,
   "key_hi": 70,
   "bg_blur": 2.0,
-  "fg_scale": 0.7,
+  "fg_scale": 0.72,
   "fg_anchor_y": 1243,
-  "fg_offset_x": -40,
-  "shadow_strength": 0.6,
+  "fg_offset_x": 0,
+  "shadow_strength": 0.65,
   "out": "reels/keep_reel_25_japan_steps-and-photos-day-3.mp4",
   "background": "backgrounds/stock/city-dusk-a.jpg",
   "bg_focus_x": 0.5,
   "work": "/tmp/claude-0/-home-claude/1691a066-b71d-519f-82cc-823b9ea3f658/scratchpad/work_25",
   "layers": [
     {
-      "text": "Japan trip with my girlfriend, day 3 ⛩️",
+      "text": "Day 1 in Tokyo with my girlfriend 🇯🇵",
       "start": 0,
       "y": 250,
       "style": "outline",
-      "size": 64,
+      "size": 60,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
     },
     {
       "text": "🚶 Steps: {n}",
       "start": 0,
       "y": null,
       "style": "box",
-      "size": 54,
+      "size": 52,
       "align": "left",
       "x": 70,
-      "maxw": 820,
+      "maxw": 840,
       "type": "counter",
       "from": 0,
-      "to": 31482,
+      "to": 31204,
       "count_start": 0.3,
       "count_end": 7.5
     },
@@ -43,25 +43,25 @@
       "start": 0,
       "y": null,
       "style": "box",
-      "size": 54,
+      "size": 52,
       "align": "left",
       "x": 70,
-      "maxw": 820,
+      "maxw": 840,
       "type": "counter",
       "from": 0,
-      "to": 4206,
+      "to": 1206,
       "count_start": 0.3,
       "count_end": 8.0
     },
     {
-      "text": "Photos of me: 2 😐",
+      "text": "Her: 1,204 photos 💅\nHim: 2. Both from behind. 😐",
       "start": 8.3,
       "y": null,
       "style": "box",
-      "size": 54,
+      "size": 52,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
     }
   ]
 }

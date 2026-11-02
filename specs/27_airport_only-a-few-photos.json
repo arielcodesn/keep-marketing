@@ -21,7 +21,7 @@
       "size": 60,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
     },
     {
       "text": "Her camera roll already: 1,107 📸",
@@ -31,17 +31,17 @@
       "size": 54,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
     },
     {
-      "text": "214 are of the plane. From the window. Our plane. 🛩️",
+      "text": "214 are of the plane. From the window. 🛩️",
       "start": 8.3,
       "y": null,
       "style": "box",
       "size": 54,
       "align": "left",
       "x": 70,
-      "maxw": 820
+      "maxw": 840
     }
   ]
 }
