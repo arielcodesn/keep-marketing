@@ -1,0 +1,258 @@
+<title>Keep Reel Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky top bar with tabs; each tab is a view. Overview = what to make next + what exists. */
+:root{
+  --bg:#f3f3f0; --surface:#ffffff; --sunk:#ebebe6; --ink:#1c1b18; --muted:#66645d; --line:#deddd6;
+  --accent:#dd7420; --accent-ink:#ffffff; --green:#24a33a; --ok:#2c8a56; --warn:#b97a12; --crit:#c8433a;
+  --travel:#2a76c6; --storage:#cc4a2c; --funny:#a7780a; --fails:#7b4cc8; --life:#26907f;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Figtree", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141412; --surface:#1d1c1a; --sunk:#252421; --ink:#f0eee8; --muted:#a19e95; --line:#302f2b;
+  --accent:#f08a35; --accent-ink:#1b1206; --green:#45c45a; --ok:#4fc184; --warn:#e2a43c; --crit:#f06b60;
+  --travel:#5aa2ee; --storage:#f07558; --funny:#e0b33c; --fails:#ac86ee; --life:#4cc6b3; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#141412; --surface:#1d1c1a; --sunk:#252421; --ink:#f0eee8; --muted:#a19e95; --line:#302f2b;
+  --accent:#f08a35; --accent-ink:#1b1206; --green:#45c45a; --ok:#4fc184; --warn:#e2a43c; --crit:#f06b60;
+  --travel:#5aa2ee; --storage:#f07558; --funny:#e0b33c; --fails:#ac86ee; --life:#4cc6b3; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:8px 64px}
+.top{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);padding-block:14px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font:800 26px/1.1 var(--display);letter-spacing:-.02em;margin:0}
+.brand p{margin:0;color:var(--muted);font-size:14px}
+nav{display:flex;gap:2px;overflow-x:auto;margin-top:12px;scrollbar-width:none}
+nav a{white-space:nowrap;padding:9px 12px;color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;border-bottom:2px solid transparent}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
+nav a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+nav .n{font:500 11px var(--mono);color:var(--muted);margin-left:4px}
+h2{font:700 20px/1.2 var(--display);letter-spacing:-.01em;margin:28px 0 12px;text-wrap:balance}
+h3{font:700 16px/1.25 var(--body);margin:0}
+.lede{color:var(--muted);margin:-6px 0 14px;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.kpi b{display:block;font:800 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.kpi span{color:var(--muted);font-size:13px}
+.kpi.alert b{color:var(--crit)}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.pill{display:inline-block;font:600 11.5px/1 var(--body);padding:5px 8px;border-radius:99px;white-space:nowrap;letter-spacing:.01em}
+.p-first{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
+.p-green{background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--green)}
+.p-up{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.p-nice{background:var(--sunk);color:var(--muted)}
+.swatch{width:12px;height:12px;border-radius:3px;margin-top:5px}
+.need{font:500 12px var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.reel{display:flex;flex-direction:column;gap:8px;min-width:0}
+.reel video,.clip video{width:100%;aspect-ratio:9/16;max-width:100%;border-radius:10px;background:var(--sunk);display:block;object-fit:cover}
+.meta{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:1px}
+.meta b{color:var(--ink);font-weight:600}
+.num{font:500 12px var(--mono);color:var(--muted)}
+.tagline{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{font:700 11px var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--c)}
+.hook{font-weight:700;line-height:1.3}
+.punch{font-weight:600;color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 12px;font:600 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.clips{display:flex;flex-direction:column;gap:16px}
+.clip{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13.5px;margin:10px 0}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.sheet{width:100%;border-radius:8px;margin:10px 0;display:block}
+.tl{width:100%;border-collapse:collapse;font-size:13px}
+.tl td{padding:4px 8px 4px 0;border-top:1px solid var(--line);vertical-align:top}
+.tl td:first-child{font:500 12px var(--mono);color:var(--muted);white-space:nowrap;width:44px}
+.scroll{overflow-x:auto}
+.bgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.bg img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;display:block;background:var(--sunk)}
+.bg a{color:var(--accent)}
+.spec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.spec ul{margin:6px 0 0;padding-left:18px}
+.spec li{margin:3px 0}
+.plan{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.plan th{text-align:left;font:600 12px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 10px;border-bottom:1px solid var(--line)}
+.plan td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+.plan td.d{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
+.st-made{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.st-ready{background:var(--sunk);color:var(--muted)}
+.st-need{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
+.empty{color:var(--muted);padding:30px 0}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .clip{grid-template-columns:minmax(0,1fr)}
+  .clip video{max-width:260px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .plan .hide-s{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Keep Reel Studio</h1><p>Hamster reels for Keep – Photo &amp; Video Cleaner</p></div>
+    <nav id="nav" aria-label="Sections"></nav>
+  </header>
+  <main id="view"></main>
+</div>
+
+<script>
+const DATA = __DATA__;
+const P = DATA.pillars;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const pretty = n => n.replace(/_/g, " · ").replace(/-/g, " ");
+const clipByName = Object.fromEntries(DATA.clips.map(c => [c.name, c]));
+const VIEWS = [
+  ["overview","Overview"],["reels","Reels",DATA.reels.length],["clips","Base clips",DATA.clips.length],
+  ["to-make","To make",DATA.tomake.length],["backgrounds","Backgrounds",DATA.bgs.length],["plan","30-day plan",DATA.plan.length]
+];
+let reelFilter = "all", planFilter = "all";
+
+function nav(cur){
+  document.getElementById("nav").innerHTML = VIEWS.map(([k,l,n]) =>
+    `<a href="#${k}" ${k===cur?'aria-current="page"':""}>${l}${n!=null?`<span class="n">${n}</span>`:""}</a>`).join("");
+}
+function video(src, poster){
+  return `<video controls playsinline preload="none" poster="${poster}" src="${src}"></video>`;
+}
+function reelCard(r){
+  return `<article class="reel" style="--c:var(--${r.pillar})">
+    ${video(`media/reels/${r.file}.mp4`, `media/posters/${r.file}.jpg`)}
+    <div class="tagline"><span class="num">#${r.num}</span><span class="tag">${esc(P[r.pillar])}</span></div>
+    <div class="hook">${esc(r.hook)}</div>
+    ${r.punch?`<div class="punch">→ ${esc(r.punch)}</div>`:""}
+    <div class="meta"><span>Hamster: <b>${esc(pretty(r.clip))}</b></span><span>Background: <b>${esc(r.bgname)}</b></span></div>
+  </article>`;
+}
+function priorityPill(p){
+  const cls = p==="Make first"?"p-first":p==="Remake on green"?"p-green":p.startsWith("Upload")?"p-up":"p-nice";
+  return `<span class="pill ${cls}">${esc(p)}</span>`;
+}
+function needCount(name){
+  const map = {"Side-eye / suspicious":"sideeye","Crying":"crying","Panic, fast swiping":"panic","Facepalm":"facepalm",
+    "Laughing (green)":"laugh","Shocked (green)":"shocked","Angry → gives up (green, full body)":"angry",
+    "Sleepy → wide awake (green)":"sleepy","Dance (green)":"dance"};
+  const k = map[name]; return k ? (DATA.emotion_need[k]||0) : 0;
+}
+function toMakeRows(items){
+  return items.map(t => `<div class="row">
+      <span class="swatch" style="background:${t.kind==="new"?"var(--crit)":t.kind==="green"?"var(--green)":"var(--line)"}"></span>
+      <div><h3>${esc(t.name)}</h3><p>${esc(t.why)}</p></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${priorityPill(t.priority)}
+        ${needCount(t.name)?`<span class="need">${needCount(t.name)} planned reels</span>`:""}</div>
+    </div>`).join("");
+}
+
+const render = {
+  overview(){
+    const planMade = DATA.plan.filter(p => p.made.length).length;
+    const blocked = DATA.plan.filter(p => p.new).length;
+    const first = DATA.tomake.filter(t => t.priority==="Make first").length;
+    const latest = DATA.reels.slice(-6).reverse();
+    return `<div class="kpis">
+        <div class="kpi"><b>${DATA.reels.length}</b><span>reels made</span></div>
+        <div class="kpi"><b>${DATA.clips.length}</b><span>base clips · ${DATA.clips.filter(c=>c.bgtype==="green").length} on green</span></div>
+        <div class="kpi"><b>${planMade}<small style="font-size:16px;color:var(--muted)"> / ${DATA.plan.length}</small></b><span>plan ideas already made</span></div>
+        <div class="kpi alert"><b>${blocked}</b><span>planned reels waiting on ${first} missing emotions</span></div>
+      </div>
+      <div class="two">
+        <section><h2>Base clips to make next</h2>
+          <p class="lede">Green screen, full body, reaction at about 4–5 s. Details in <a href="#to-make" style="color:var(--accent)">To make</a>.</p>
+          <div class="list">${toMakeRows(DATA.tomake.filter(t=>t.kind!=="variation"))}</div></section>
+        <section><h2>Latest reels</h2><p class="lede">Previews at phone quality. Full-quality files are in the repo's reels/ folder.</p>
+          <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${latest.map(reelCard).join("")}</div></section>
+      </div>`;
+  },
+  reels(){
+    const opts = [["all","All"], ...Object.entries(P).filter(([k]) => DATA.reels.some(r=>r.pillar===k)), ["cutout","New background"], ["original","Original scene"]];
+    const show = r => reelFilter==="all" || r.pillar===reelFilter || (reelFilter==="cutout" && r.bg) || (reelFilter==="original" && !r.bg);
+    const rs = DATA.reels.filter(show);
+    return `<h2>Reels</h2>
+      <div class="chips">${opts.map(([k,l]) => `<button class="chip" data-rf="${k}" aria-pressed="${reelFilter===k}">${l}</button>`).join("")}</div>
+      ${rs.length?`<div class="grid">${rs.map(reelCard).join("")}</div>`:'<p class="empty">No reels match this filter.</p>'}`;
+  },
+  clips(){
+    const typeLabel = {green:["Green screen","p-green"],white:["White studio","p-nice"],scene:["Fixed scene","p-up"]};
+    return `<h2>Base clips</h2><p class="lede">Each clip has a frame every half second. Open the timeline to see what the hamster does at each moment and where the beat lands.</p>
+      <div class="clips">${DATA.clips.map(c => { const [tl,tc] = typeLabel[c.bgtype]; return `<article class="clip">
+        ${video(`media/clips/${c.name}.mp4`, `media/posters/clip_${c.name}.jpg`)}
+        <div style="min-width:0">
+          <div class="badges"><span class="pill ${tc}">${tl}</span>${c.reels.length?`<span class="pill p-nice">${c.reels.length} reel${c.reels.length>1?"s":""} made</span>`:""}</div>
+          <h3 style="margin-top:8px;font:700 18px/1.25 var(--display)">${esc(pretty(c.name))}</h3>
+          <p style="margin:4px 0 0">${esc(c.summary)}</p>
+          <dl class="facts"><dt>Beat</dt><dd>${esc(c.beat)}</dd><dt>Cutout</dt><dd>${esc(c.cutout)}</dd>
+            <dt>Framing</dt><dd>${esc(c.framing)}</dd><dt>Good for</dt><dd>${esc(c.use)}</dd></dl>
+          <details><summary>Timeline, every 0.5 s</summary>
+            <div class="scroll"><img class="sheet" loading="lazy" src="media/sheets/${c.name}.jpg" alt="Frames of ${esc(c.name)} every half second" style="min-width:560px"></div>
+            <table class="tl">${c.rows.map(([t,d]) => `<tr><td>${t}s</td><td>${esc(d).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</td></tr>`).join("")}</table>
+          </details>
+        </div></article>`; }).join("")}</div>`;
+  },
+  "to-make"(){
+    const groups = ["Make first","Remake on green","Upload if you have it","Nice to have"];
+    return `<h2>Base clips to make</h2><p class="lede">${DATA.plan.filter(p=>p.new).length} of the ${DATA.plan.length} planned reels can't be made until the first four exist. Remaking the most-used emotions on green removes the slow cutout and the edge flicker.</p>
+      ${groups.map(g => { const items = DATA.tomake.filter(t=>t.priority===g); return items.length?`<h2 style="font-size:16px;margin-top:20px">${g}</h2><div class="list">${toMakeRows(items)}</div>`:""; }).join("")}
+      <h2>How to shoot them</h2>
+      <div class="spec"><ul>
+        <li>Flat, evenly lit bright green background and floor (about #00FF00). No shadows on the green.</li>
+        <li>Full body, same size and position as the strut clip, with a little gap at the edges.</li>
+        <li>Same outfit: black cap with the photo logo, black tee that says “Keep”.</li>
+        <li>About 10 seconds. A clear reaction (the beat) at roughly 4–5 s, then hold it.</li>
+        <li>Little or no motion blur, so fast moves stay sharp.</li>
+        <li>Upload to the repo's <b>base-clips/</b> folder, named like <span class="num">green_crying_fullbody.mp4</span>.</li>
+      </ul></div>`;
+  },
+  backgrounds(){
+    return `<h2>Backgrounds</h2><p class="lede">All free for commercial use. Add more to the repo's backgrounds/ folder.</p>
+      <div class="bgs">${DATA.bgs.map(b => `<article class="bg">
+        <img loading="lazy" src="media/bg/${b.key}.jpg" alt="${esc(b.name)}">
+        <h3 style="margin-top:8px">${esc(b.name)}</h3>
+        <div class="meta"><span>${esc(b.license)} · <a href="${b.url}" target="_blank" rel="noopener">source</a></span>
+        <span>${b.used.length?`Used in ${b.used.map(u=>"#"+u.split("_")[2]).join(", ")}`:"Not used yet"}</span></div>
+      </article>`).join("")}</div>`;
+  },
+  plan(){
+    const opts = [["all","All"], ...Object.entries(P), ["made","Made"], ["need","Needs a new clip"]];
+    const show = p => planFilter==="all" || p.pillar===planFilter || (planFilter==="made" && p.made.length) || (planFilter==="need" && p.new);
+    const rows = DATA.plan.filter(show);
+    const status = p => p.made.length ? `<span class="pill st-made">Made · #${p.made.map(m=>m.split("_")[2]).join(", #")}</span>`
+      : p.new ? `<span class="pill st-need">Needs ${esc(p.emotion)} clip</span>` : `<span class="pill st-ready">Ready to make</span>`;
+    return `<h2>30-day plan</h2><p class="lede">5 reels a day, one per topic. The full checklist (with ticks) is plan/keep-30-day-reels.html in the repo.</p>
+      <div class="chips">${opts.map(([k,l]) => `<button class="chip" data-pf="${k}" aria-pressed="${planFilter===k}">${l}</button>`).join("")}</div>
+      <div class="scroll"><table class="plan"><thead><tr><th>Day</th><th>Reel</th><th class="hide-s">Hamster</th><th>Status</th></tr></thead><tbody>
+      ${rows.map(p => `<tr style="--c:var(--${p.pillar})"><td class="d">D${String(p.day).padStart(2,"0")}</td>
+        <td><span class="tag">${esc(P[p.pillar])}</span><div class="hook" style="font-weight:600">${esc(p.hook)}</div>${p.punch?`<div class="punch" style="font-size:13px">→ ${esc(p.punch)}</div>`:""}</td>
+        <td class="hide-s">${esc(p.emotion)}</td><td>${status(p)}</td></tr>`).join("")}
+      </tbody></table></div>`;
+  },
+};
+
+function show(){
+  let k = location.hash.slice(1);
+  if (!render[k]) k = "overview";
+  nav(k);
+  document.getElementById("view").innerHTML = render[k]();
+  document.querySelectorAll("[data-rf]").forEach(b => b.onclick = () => { reelFilter = b.dataset.rf; show(); });
+  document.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => { planFilter = b.dataset.pf; show(); });
+}
+window.addEventListener("hashchange", () => { show(); window.scrollTo(0,0); });
+show();
+</script>

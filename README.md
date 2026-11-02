@@ -38,3 +38,8 @@ Setup per machine: ffmpeg, Pillow, numpy, Noto Color Emoji; `npm pack @fontsourc
 `base-clips/README.md` indexes every clip. Each clip has `base-clips/frames/<clip>/` with a frame every 0.5 s, a `contact_sheet.jpg` and a `timeline.md` (background, framing, cutout quality, beat times and a half-second-by-half-second description). Plan reels from these: pick the clip whose beat matches the punchline, and time the pop-in text to that second.
 
 When a new clip is added: extract the 0.5 s frames and contact sheet, look at them, add the clip to `CLIPS` in `tools/write_timelines.py`, and run it.
+
+## Dashboard
+
+Keep Reel Studio (private Claude artifact): https://claude.ai/artifact/KEecvdKom8eMHBBMWVd4bq
+Shows reels, base clips with timelines, backgrounds, the 30-day plan and the base clips still to make. Rebuild after each batch: make 540px previews into `<dash>/media/…`, run `python3 -I tools/build_dashboard.py <dash>`, then republish to the same URL (add new reels to `REELS` in `tools/build_dashboard.py`).
