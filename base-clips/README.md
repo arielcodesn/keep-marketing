@@ -1,0 +1,14 @@
+# Base clips
+
+Every clip has a `frames/<clip>/` folder with a frame every 0.5 s (`00.0s.jpg`, `00.5s.jpg`, …), a `contact_sheet.jpg` of all frames, and a `timeline.md` describing each half-second.
+
+| Clip | Background | Framing | Beat | Use for |
+|---|---|---|---|---|
+| [green_strut-turn_fullbody](frames/green_strut-turn_fullbody/timeline.md) | Green screen (≈ RGB 50,207,35) | Full body, centred, feet near the bottom (~y 1620 of 1920) | 2.5s (turns into the strut); 8.0s (turns back to camera, smiles). | "Me walking into…" overconfidence jokes; walking-in-a-place backgrounds (pier, airport, street). |
+| [white_dance_fullbody](frames/white_dance_fullbody/timeline.md) | Plain off-white studio (RGB ~251,251,251) | Full body, centred, feet near ~y 1720 | Whole clip is a celebration; the spin at 6.0–7.5s is the most dynamic moment. | Payoff and celebration reels: "Me after deleting 4,000 screenshots". |
+| [white_calm-to-laughing_fullbody](frames/white_calm-to-laughing_fullbody/timeline.md) | Plain white studio | Full body, centred, feet near ~y 1720 | **5.5s**: eyes close and it laughs out loud. Put the punchline at 5.0–5.5s. | Bad-photo jokes: "37 photos of his thumb 😭", "I'm blinking in all of them". |
+| [white_calm-to-shocked_fullbody](frames/white_calm-to-shocked_fullbody/timeline.md) | Plain white studio | Full body, centred, fills more of the frame (feet ~y 1720, head ~y 400), so shrink it (fg_scale ≈ 0 | **4.5s**: first surprise. **6.5s**: full jaw-drop. Punchline at 4.0–4.5s. | Number reveals: "Photos taken today: 2,941 💀", "Photos: 118 GB". |
+| [concert_excited-to-blissful_branded](frames/concert_excited-to-blissful_branded/timeline.md) | Concert crowd with purple stage lights (built-in scene) | Waist up, body runs off the bottom of the frame | 0–2s excited grin; 2.5s turns serious/staring; 9.0s lowers the phone. | Concert filming jokes, or cut out onto any landscape it's "photographing". |
+| [desk_frustrated-to-defeated_branded](frames/desk_frustrated-to-defeated_branded/timeline.md) | Office desk with a lamp and plant (built-in scene) | Waist up behind a desk; desk covers the lower body | **2.5s**: anger starts. **5.5s**: slams the phone down. **8.5s**: defeated face. | Can't-find-a-photo and iCloud-nag jokes: "Trying to find ONE photo of my ID…". |
+| [living-room_sleepy-to-shocked](frames/living-room_sleepy-to-shocked/timeline.md) | Cozy living room at night (lamp, plant, mug) | Sitting, upper body above a coffee table | **2.0s** eyes closed (sleepy). **3.0s** and **6.5s** wide-eyed shock. **7.5s** winces. | Late-night scrolling jokes: "2am, checking iPhone Storage…". |
+| [beach_surprised](frames/beach_surprised/timeline.md) | Beach at sunset with palm trees, suitcase, sun hat and camera | Sitting, side/three-quarter view, upper body | **4.0s** turns to face the camera, surprised. Clip is 7.9 s long. | Vacation storage jokes: "Day 1 of vacation: iCloud Storage Full". |
