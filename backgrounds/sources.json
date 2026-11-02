@@ -1,0 +1,15 @@
+{
+ "note": "Unsplash photos (free under the Unsplash License, commercial use allowed). The 'Fetch stock backgrounds' GitHub Action downloads each one into backgrounds/stock/<name>.jpg whenever this file changes.",
+ "photos": {
+  "airport-gate-a": "Ge_zO-UXwdo", "airport-gate-b": "3aoDO4XmRH0", "airport-gate-c": "KAORnKNOcys",
+  "house-party-a": "bscyZhPghTY", "house-party-b": "rNekFxd0ECA", "house-party-c": "FhdC7RGb5Yg",
+  "bedroom-night-a": "XhLdjyQQi2I", "bedroom-night-b": "ym5zyvzSwqI", "bedroom-night-c": "CqVHT8g45R8",
+  "beach-day-a": "pAL00n8whQc", "beach-day-b": "Q5n_P2dYwZY", "beach-day-c": "eO9C2gVS99Q",
+  "city-dusk-a": "laQwB9ixkyk", "city-dusk-b": "QWrtDkkfDY0", "city-dusk-c": "Mn7nddKmJzk",
+  "cafe-a": "-gXbkR2TZmg", "cafe-b": "VobvKmG-StA",
+  "wedding-a": "bvDoQsC0PFs", "wedding-b": "l17Cu-FQaZk",
+  "office-a": "LycaA7rWsHc", "office-b": "P9l_2oyhXzk",
+  "christmas-living-room-a": "n__aMpQWx0A", "christmas-living-room-b": "CfE4Rs3GDwk",
+  "bar-lights": "to3CJ1JMOns"
+ }
+}

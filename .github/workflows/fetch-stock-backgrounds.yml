@@ -1,0 +1,48 @@
+# Downloads the Unsplash photos listed in backgrounds/sources.json into backgrounds/stock/
+# (resized to 2400px on the long side) and commits them. Runs when sources.json changes.
+name: Fetch stock backgrounds
+
+on:
+  push:
+    branches: [main]
+    paths: ["backgrounds/sources.json"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download photos
+        run: |
+          sudo apt-get -qq install -y imagemagick >/dev/null
+          mkdir -p backgrounds/stock
+          echo "# Stock background credits" > backgrounds/stock/CREDITS.md
+          echo "All photos from Unsplash under the Unsplash License (free for commercial use)." >> backgrounds/stock/CREDITS.md
+          python3 - <<'PY' > /tmp/list.txt
+          import json
+          for name, pid in json.load(open("backgrounds/sources.json"))["photos"].items():
+              print(name, pid)
+          PY
+          while read -r name pid; do
+            out="backgrounds/stock/$name.jpg"
+            if [ -f "$out" ]; then echo "skip $name"; continue; fi
+            curl -sSL --fail -A "Mozilla/5.0" -o /tmp/p "https://unsplash.com/photos/$pid/download?force=true" || { echo "FAILED $name ($pid)"; continue; }
+            if file /tmp/p | grep -qiE "JPEG|PNG|WebP"; then
+              convert /tmp/p -auto-orient -resize "2400x2400>" -quality 88 "$out"
+              echo "- $name: https://unsplash.com/photos/$pid" >> backgrounds/stock/CREDITS.md
+              echo "ok $name"
+            else
+              echo "NOT AN IMAGE $name ($pid): $(file -b /tmp/p | cut -c1-60)"
+            fi
+          done < /tmp/list.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backgrounds/stock
+          git diff --cached --quiet || git commit -m "Fetch stock backgrounds from Unsplash"
+          git push
