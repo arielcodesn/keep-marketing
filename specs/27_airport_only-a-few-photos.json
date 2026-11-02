@@ -20,8 +20,8 @@
       "style": "outline",
       "size": 60,
       "align": "center",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     },
     {
       "text": "Her camera roll already: 1,107 📸",
@@ -30,8 +30,8 @@
       "style": "box",
       "size": 54,
       "align": "center",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     },
     {
       "text": "214 are of the plane. From the window. 🛩️",
@@ -40,8 +40,8 @@
       "style": "box",
       "size": 54,
       "align": "center",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     }
   ],
   "hold_last": 2.5

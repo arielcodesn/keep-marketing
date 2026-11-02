@@ -97,7 +97,11 @@ def wrap(text, font, size, maxw):
         lines.append(cur)
     return lines
 
-def render_text(text, y_top, style="outline", size=78, maxw=900, align="center", x_left=70):
+# iOS Instagram scales a 9:16 reel to fill the taller phone screen and crops ~100px off each side,
+# so everything readable stays inside SAFE_X .. W-SAFE_X.
+SAFE_X = 160
+
+def render_text(text, y_top, style="outline", size=78, maxw=760, align="center", x_left=SAFE_X):
     """align="left" starts every line at x_left (keeps text clear of IG's right-side buttons)."""
     xs = (lambda w_: x_left) if align == "left" else (lambda w_: (W - w_) / 2)
     font = ImageFont.truetype(FONT, size)
@@ -338,7 +342,7 @@ def main(spec_path):
         y = L.get("y")
         if y is None:
             y = bottom + (60 if style == "box" else 30)
-        opts = dict(maxw=L.get("maxw", 900), align=L.get("align", "center"), x_left=L.get("x", 70))
+        opts = dict(maxw=min(L.get("maxw", 760), W - 2 * SAFE_X), align=L.get("align", "center"), x_left=max(L.get("x", SAFE_X), SAFE_X))
         if L.get("type") == "counter":
             # a number that counts up: "{label}" with {n} replaced by the current value
             cdir = os.path.join(work, f"counter_{i}"); os.makedirs(cdir, exist_ok=True)

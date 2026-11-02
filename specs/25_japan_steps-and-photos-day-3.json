@@ -20,8 +20,8 @@
       "style": "outline",
       "size": 60,
       "align": "left",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     },
     {
       "text": "🚶 Steps: {n}",
@@ -30,8 +30,8 @@
       "style": "box",
       "size": 52,
       "align": "left",
-      "x": 70,
-      "maxw": 840,
+      "x": 160,
+      "maxw": 740,
       "type": "counter",
       "from": 0,
       "to": 31204,
@@ -45,8 +45,8 @@
       "style": "box",
       "size": 52,
       "align": "left",
-      "x": 70,
-      "maxw": 840,
+      "x": 160,
+      "maxw": 740,
       "type": "counter",
       "from": 0,
       "to": 1206,
@@ -60,8 +60,8 @@
       "style": "box",
       "size": 52,
       "align": "left",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     }
   ],
   "hold_last": 2.5

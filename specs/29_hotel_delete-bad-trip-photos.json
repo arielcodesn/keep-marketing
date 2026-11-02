@@ -20,8 +20,8 @@
       "style": "outline",
       "size": 60,
       "align": "left",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     },
     {
       "text": "Him: deleted 212 🗑️\nHer: deleted 0. \"They're all memories\" 😌",
@@ -30,8 +30,8 @@
       "style": "box",
       "size": 52,
       "align": "left",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     },
     {
       "text": "The 38 photos of a Lawson egg sandwich: memories 🥪",
@@ -40,8 +40,8 @@
       "style": "box",
       "size": 52,
       "align": "left",
-      "x": 70,
-      "maxw": 840
+      "x": 160,
+      "maxw": 740
     }
   ],
   "hold_last": 2.5
