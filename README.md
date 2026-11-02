@@ -32,3 +32,9 @@ python3 -I tools/reel.py specs/19_pier_vacation-1-2gb-left.json
 ```
 
 Setup per machine: ffmpeg, Pillow, numpy, Noto Color Emoji; `npm pack @fontsource/nunito@5.3.0` unpacked in `~/fonts`; for non-green clips also `npm install @imgly/background-removal-node@1.4.5` in `~/bgr`.
+
+## Clip timelines
+
+`base-clips/README.md` indexes every clip. Each clip has `base-clips/frames/<clip>/` with a frame every 0.5 s, a `contact_sheet.jpg` and a `timeline.md` (background, framing, cutout quality, beat times and a half-second-by-half-second description). Plan reels from these: pick the clip whose beat matches the punchline, and time the pop-in text to that second.
+
+When a new clip is added: extract the 0.5 s frames and contact sheet, look at them, add the clip to `CLIPS` in `tools/write_timelines.py`, and run it.
