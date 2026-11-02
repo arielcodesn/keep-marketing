@@ -365,6 +365,14 @@ def main(spec_path):
     args += audio + ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
              "-pix_fmt", "yuv420p", "-movflags", "+faststart", spec["out"]]
     run(args)
+    hold = float(spec.get("hold_last", 0))
+    if hold > 0:  # freeze the final frame (text included) so the punchline has time to be read
+        tmp = spec["out"] + ".hold.mp4"
+        run(["ffmpeg", "-v", "error", "-y", "-i", spec["out"],
+             "-vf", f"tpad=stop_mode=clone:stop_duration={hold}", "-af", f"apad=pad_dur={hold}",
+             "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
+             "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", tmp])
+        os.replace(tmp, spec["out"])
     print("wrote", spec["out"])
 
 if __name__ == "__main__":
