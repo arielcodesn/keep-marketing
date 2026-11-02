@@ -20,27 +20,22 @@ jobs:
         run: |
           sudo apt-get -qq install -y imagemagick >/dev/null
           mkdir -p backgrounds/stock
-          echo "# Stock background credits" > backgrounds/stock/CREDITS.md
-          echo "All photos from Unsplash under the Unsplash License (free for commercial use)." >> backgrounds/stock/CREDITS.md
+          [ -f backgrounds/stock/CREDITS.md ] || printf '# Stock background credits\nAll photos from Unsplash under the Unsplash License (free for commercial use).\n' > backgrounds/stock/CREDITS.md
           python3 - <<'PY' > /tmp/list.txt
           import json
-          for name, pid in json.load(open("backgrounds/sources.json"))["photos"].items():
-              print(name, pid)
+          for name, p in json.load(open("backgrounds/sources.json"))["photos"].items():
+              print(name, p["image"], p["page"])
           PY
-          while read -r name pid; do
+          while read -r name img page; do
             out="backgrounds/stock/$name.jpg"
             if [ -f "$out" ]; then echo "skip $name"; continue; fi
-            UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-            page=$(curl -sSL -A "$UA" "https://unsplash.com/photos/$pid" || true)
-            img=$(printf '%s' "$page" | grep -oE 'https://images\.unsplash\.com/photo-[^"?& ]+' | head -1)
-            if [ -z "$img" ]; then echo "FAILED $name ($pid): no image link on page ($(printf '%s' "$page" | head -c 80 | tr -d '\n'))"; continue; fi
-            curl -sSL --fail -A "$UA" -o /tmp/p "$img?fm=jpg&q=88&w=2400" || { echo "FAILED $name ($pid): image download"; continue; }
+            curl -sSL --fail -A "Mozilla/5.0" -o /tmp/p "$img?fm=jpg&q=88&w=2400" || { echo "FAILED $name"; continue; }
             if file /tmp/p | grep -qiE "JPEG|PNG|WebP"; then
               convert /tmp/p -auto-orient -resize "2400x2400>" -quality 88 "$out"
-              echo "- $name: https://unsplash.com/photos/$pid" >> backgrounds/stock/CREDITS.md
-              echo "ok $name"
+              echo "- $name: $page" >> backgrounds/stock/CREDITS.md
+              echo "ok $name $(identify -format '%wx%h' "$out")"
             else
-              echo "NOT AN IMAGE $name ($pid): $(file -b /tmp/p | cut -c1-60)"
+              echo "NOT AN IMAGE $name: $(file -b /tmp/p | cut -c1-60)"
             fi
           done < /tmp/list.txt
       - name: Commit
