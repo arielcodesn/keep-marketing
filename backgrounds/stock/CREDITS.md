@@ -12,3 +12,6 @@ All photos from Unsplash under the Unsplash License (free for commercial use).
 - ryokan-a: https://unsplash.com/photos/2WaUtK4lU5w
 - ryokan-b: https://unsplash.com/photos/TeNtfZuCWe8
 - ryokan-c: https://unsplash.com/photos/YG65N1UBWRA
+- konbini-night-a: https://unsplash.com/photos/VtWiBy8fSDM
+- konbini-night-b: https://unsplash.com/photos/WtucOteug8M
+- konbini-night-c: https://unsplash.com/photos/5Wr9ilS3lug
