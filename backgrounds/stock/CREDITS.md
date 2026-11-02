@@ -9,3 +9,6 @@ All photos from Unsplash under the Unsplash License (free for commercial use).
 - beach-day-a: https://unsplash.com/photos/pAL00n8whQc
 - city-dusk-a: https://unsplash.com/photos/laQwB9ixkyk
 - city-dusk-b: https://unsplash.com/photos/QWrtDkkfDY0
+- ryokan-a: https://unsplash.com/photos/2WaUtK4lU5w
+- ryokan-b: https://unsplash.com/photos/TeNtfZuCWe8
+- ryokan-c: https://unsplash.com/photos/YG65N1UBWRA
