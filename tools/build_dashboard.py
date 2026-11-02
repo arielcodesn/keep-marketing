@@ -22,6 +22,10 @@ BG = {
     "valley": ("Valley", "Unsplash", "https://unsplash.com/photos/M6XC789HLe8"),
     "snowy-summit": ("Snowy summit", "Unsplash (CC0)", "https://unsplash.com/photos/yrwpJwDNSHE"),
     "pink-flower": ("Pink flower on blue", "Unsplash", "https://unsplash.com/photos/iGrsa9rL11o"),
+    "city-dusk-a": ("Japanese street at dusk", "Unsplash", "https://unsplash.com/photos/laQwB9ixkyk"),
+    "airport-gate-b": ("Airport gate", "Unsplash", "https://unsplash.com/photos/3aoDO4XmRH0"),
+    "house-party-a": ("Party with golden lights", "Unsplash", "https://unsplash.com/photos/bscyZhPghTY"),
+    "bedroom-night-a": ("Bedside lamp at night", "Unsplash", "https://unsplash.com/photos/XhLdjyQQi2I"),
 }
 
 # file stem, pillar, hook, punchline, base clip, background key (None = original scene), plan id it fulfils
@@ -45,11 +49,11 @@ REELS = [
     ("keep_reel_17_summit_deleted-4000-screenshots", "storage", "Me after finally deleting the 4,000 screenshots I took \"for later\" 💃", "", "white_dance_fullbody", "snowy-summit", "d01-storage"),
     ("keep_reel_18_flower_deleted-4000-screenshots", "storage", "Me after finally deleting the 4,000 screenshots I took \"for later\" 💃", "", "white_dance_fullbody", "pink-flower", "d01-storage"),
     ("keep_reel_19_pier_vacation-1-2gb-left", "travel", "Me walking into a 2-week vacation with 1.2 GB of storage left like it's enough 🧳", "", "green_strut-turn_fullbody", "pier-sunset", "d03-travel"),
-    ("keep_reel_20_lake_one-good-trip-photo", "funny", "When ONE trip photo finally doesn't make me look like a potato 🥔", "Posting it everywhere ✨", "green_strut-turn_fullbody", "lake-mountains", None),
-    ("keep_reel_21_pier_freed-23gb-before-trip", "storage", "Me after freeing 23 GB the night before the trip ✈️", "Bring on the 4,000 sunset pics 🌅", "green_strut-turn_fullbody", "pier-sunset", None),
+    ("keep_reel_20_city_one-good-trip-photo", "funny", "When ONE trip photo finally doesn't make me look like a potato 🥔", "Posting it everywhere ✨", "green_strut-turn_fullbody", "city-dusk-a", None),
+    ("keep_reel_21_airport_freed-23gb-before-trip", "storage", "Me after freeing 23 GB the night before the trip ✈️", "Bring on the 4,000 sunset pics 🌅", "green_strut-turn_fullbody", "airport-gate-b", None),
     ("keep_reel_22_dunes_jump-shot-attempt-48", "fails", "Jump shot attempt #48 🏜️", "Finally nailed it. Retiring now 😌", "green_strut-turn_fullbody", "desert-dunes", None),
-    ("keep_reel_23_valley_only-good-group-photo", "life", "Walking away after taking the ONLY good group photo 📸", "Photographer of the year 🏆", "green_strut-turn_fullbody", "valley", None),
-    ("keep_reel_24_summit_deleted-200-photos-of-ex", "life", "Me after finally deleting 200 photos of my ex 🫡", "Storage: freed. Heart: also freed ✨", "green_strut-turn_fullbody", "snowy-summit", None),
+    ("keep_reel_23_party_only-good-group-photo", "life", "Walking away after taking the ONLY good group photo 📸", "Photographer of the year 🏆", "green_strut-turn_fullbody", "house-party-a", None),
+    ("keep_reel_24_bedroom_deleted-200-photos-of-ex", "life", "Me after finally deleting 200 photos of my ex 🫡", "Storage: freed. Heart: also freed ✨", "green_strut-turn_fullbody", "bedroom-night-a", None),
 ]
 
 from clip_prompts import CLIPS as TO_MAKE_CLIPS, REFERENCES, prompt_for

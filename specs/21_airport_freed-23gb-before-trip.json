@@ -1,7 +1,7 @@
 {
   "base": "base-clips/green_strut-turn_fullbody.mp4",
-  "out": "reels/keep_reel_21_pier_freed-23gb-before-trip.mp4",
-  "background": "backgrounds/pier-sunset.jpg",
+  "out": "reels/keep_reel_21_airport_freed-23gb-before-trip.mp4",
+  "background": "backgrounds/stock/airport-gate-b.jpg",
   "key": "green",
   "bg_focus_x": 0.5,
   "bg_blur": 2.0,

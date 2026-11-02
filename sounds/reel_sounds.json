@@ -277,40 +277,6 @@
    "volume": 0.6
   }
  ],
- "keep_reel_20_lake_one-good-trip-photo": [
-  {
-   "sound": "smooth-sax",
-   "at": 0.3,
-   "volume": 0.85
-  },
-  {
-   "sound": "ding",
-   "at": 2.5,
-   "volume": 0.7
-  },
-  {
-   "sound": "victory",
-   "at": 8.0,
-   "volume": 0.6
-  }
- ],
- "keep_reel_21_pier_freed-23gb-before-trip": [
-  {
-   "sound": "victory",
-   "at": 0.2,
-   "volume": 0.8
-  },
-  {
-   "sound": "whoosh",
-   "at": 2.3,
-   "volume": 0.7
-  },
-  {
-   "sound": "smooth-sax",
-   "at": 2.6,
-   "volume": 0.8
-  }
- ],
  "keep_reel_22_dunes_jump-shot-attempt-48": [
   {
    "sound": "tick-tock",
@@ -328,7 +294,41 @@
    "volume": 0.6
   }
  ],
- "keep_reel_23_valley_only-good-group-photo": [
+ "keep_reel_20_city_one-good-trip-photo": [
+  {
+   "sound": "smooth-sax",
+   "at": 0.3,
+   "volume": 0.85
+  },
+  {
+   "sound": "ding",
+   "at": 2.5,
+   "volume": 0.7
+  },
+  {
+   "sound": "victory",
+   "at": 8.0,
+   "volume": 0.6
+  }
+ ],
+ "keep_reel_21_airport_freed-23gb-before-trip": [
+  {
+   "sound": "victory",
+   "at": 0.2,
+   "volume": 0.8
+  },
+  {
+   "sound": "whoosh",
+   "at": 2.3,
+   "volume": 0.7
+  },
+  {
+   "sound": "smooth-sax",
+   "at": 2.6,
+   "volume": 0.8
+  }
+ ],
+ "keep_reel_23_party_only-good-group-photo": [
   {
    "sound": "smooth-sax",
    "at": 0.3,
@@ -340,7 +340,7 @@
    "volume": 0.8
   }
  ],
- "keep_reel_24_summit_deleted-200-photos-of-ex": [
+ "keep_reel_24_bedroom_deleted-200-photos-of-ex": [
   {
    "sound": "sad-violin",
    "at": 0.0,

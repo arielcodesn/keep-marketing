@@ -1,9 +1,9 @@
 {
   "base": "base-clips/green_strut-turn_fullbody.mp4",
-  "out": "reels/keep_reel_24_summit_deleted-200-photos-of-ex.mp4",
-  "background": "backgrounds/snowy-summit.jpg",
+  "out": "reels/keep_reel_24_bedroom_deleted-200-photos-of-ex.mp4",
+  "background": "backgrounds/stock/bedroom-night-a.jpg",
   "key": "green",
-  "bg_focus_x": 0.5,
+  "bg_focus_x": 0.6,
   "bg_blur": 2.0,
   "fg_scale": 0.75,
   "fg_anchor_y": 1640,

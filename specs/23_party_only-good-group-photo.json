@@ -1,9 +1,9 @@
 {
   "base": "base-clips/green_strut-turn_fullbody.mp4",
-  "out": "reels/keep_reel_23_valley_only-good-group-photo.mp4",
-  "background": "backgrounds/valley.jpg",
+  "out": "reels/keep_reel_23_party_only-good-group-photo.mp4",
+  "background": "backgrounds/stock/house-party-a.jpg",
   "key": "green",
-  "bg_focus_x": 0.5,
+  "bg_focus_x": 0.55,
   "bg_blur": 2.0,
   "fg_scale": 0.75,
   "fg_anchor_y": 1640,
