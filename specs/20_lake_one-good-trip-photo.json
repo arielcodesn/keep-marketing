@@ -1,0 +1,29 @@
+{
+  "base": "base-clips/green_strut-turn_fullbody.mp4",
+  "out": "reels/keep_reel_20_lake_one-good-trip-photo.mp4",
+  "background": "backgrounds/lake-mountains.jpg",
+  "key": "green",
+  "bg_focus_x": 0.5,
+  "bg_blur": 2.0,
+  "fg_scale": 0.75,
+  "fg_anchor_y": 1640,
+  "shadow_strength": 0.7,
+  "mute": true,
+  "work": "/tmp/claude-0/-home-claude/1691a066-b71d-519f-82cc-823b9ea3f658/scratchpad/work_20",
+  "layers": [
+    {
+      "text": "When ONE trip photo finally doesn't make me look like a potato 🥔",
+      "start": 0,
+      "y": 270,
+      "style": "outline",
+      "size": 72
+    },
+    {
+      "text": "Posting it everywhere ✨",
+      "start": 2.5,
+      "y": null,
+      "style": "box",
+      "size": 70
+    }
+  ]
+}
