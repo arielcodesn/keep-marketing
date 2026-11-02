@@ -1,6 +1,8 @@
 """Builds the Keep reel studio dashboard (a single HTML page + media folder).
 
 Usage: python3 -I tools/build_dashboard.py <out_dir>
+Content to edit: REELS and BG below, plan/ideas.py (30-day plan), plan/clip_prompts.py (clips to make + prompts),
+tools/write_timelines.py (base clip timelines). Layout: tools/dashboard_template.html.
 Expects <out_dir>/media/{reels,clips,posters,sheets,bg} to already hold the preview media
 (540px-wide re-encodes of reels/ and base-clips/, poster frames, contact sheets, backgrounds).
 """
@@ -45,20 +47,7 @@ REELS = [
     ("keep_reel_19_pier_vacation-1-2gb-left", "travel", "Me walking into a 2-week vacation with 1.2 GB of storage left like it's enough 🧳", "", "green_strut-turn_fullbody", "pier-sunset", "d03-travel"),
 ]
 
-# Base clips still to make: (emotion, why, priority, kind)
-TO_MAKE = [
-    ("Side-eye / suspicious", "Group photos, someone scrolling your phone, GC receipts", "Make first", "new"),
-    ("Crying", "Storage Full at the best moment, deleting photos of an ex", "Make first", "new"),
-    ("Panic, fast swiping", "Hiding photos before someone sees, boarding pass lost in memes", "Make first", "new"),
-    ("Facepalm", "47 near-identical photos, zooming in on a plastic bag", "Make first", "new"),
-    ("Laughing (green)", "Used 45× in the plan; the current clip is on white, so every reel needs the slow AI cutout", "Remake on green", "green"),
-    ("Shocked (green)", "Used 23×; number-reveal punchlines", "Remake on green", "green"),
-    ("Angry → gives up (green, full body)", "Used 17×; the current clip is stuck behind an office desk", "Remake on green", "green"),
-    ("Sleepy → wide awake (green)", "Used 10×; the current clip is stuck in the living room and cuts out badly", "Remake on green", "green"),
-    ("Dance (green)", "Used 12×; you may already have this in another session, so upload it to base-clips/", "Upload if you have it", "green"),
-    ("Laughing, variation 2 (pointing at phone)", "So 45 laughing reels don't all look the same", "Nice to have", "variation"),
-    ("Shocked, variation 2 (drops the phone)", "A bigger reaction for the biggest numbers", "Nice to have", "variation"),
-]
+from clip_prompts import CLIPS as TO_MAKE_CLIPS, REFERENCES, prompt_for
 
 PLAN_EMOTION_TO_CLIP = {k: v[0] for k, v in PLAN_CLIPS.items()}
 
@@ -90,11 +79,17 @@ def main():
                   bg=r[5], bgname=BG[r[5]][0] if r[5] else "Original scene", plan=r[6]) for r in REELS]
     bgs = [dict(key=k, name=v[0], license=v[1], url=v[2], used=[r[0] for r in REELS if r[5] == k]) for k, v in BG.items()]
     data = dict(clips=clips, reels=reels, plan=plan, pillars=PILLARS, bgs=bgs,
-                tomake=[dict(name=a, why=b, priority=c, kind=d) for a, b, c, d in TO_MAKE],
+                tomake=[dict(id=c["id"], name=c["name"], why=c["why"], priority=c["priority"], kind=c["kind"],
+                             beat=c["beat"], file=c["file"], prompt=prompt_for(c)) for c in TO_MAKE_CLIPS],
+                refs=[dict(file=f, caption=cap) for f, cap in REFERENCES],
                 emotion_need=emotion_need)
-    tpl = open(os.path.join(HERE, "dashboard_template.html")).read()
-    open(os.path.join(OUT, "index.html"), "w").write(tpl.replace("__DATA__", json.dumps(data, ensure_ascii=False)))
-    print("wrote", os.path.join(OUT, "index.html"))
+    # The page (index.html) is a fixed template; all content lives in data.json.
+    # Viewer edits (status, prompt overrides, notes, posted/views) live in the dashboard's
+    # own database, so rebuilding data.json never overwrites them.
+    import shutil
+    shutil.copy(os.path.join(HERE, "dashboard_template.html"), os.path.join(OUT, "index.html"))
+    json.dump(data, open(os.path.join(OUT, "data.json"), "w"), ensure_ascii=False, indent=1)
+    print("wrote", os.path.join(OUT, "index.html"), "and data.json")
 
 if __name__ == "__main__":
     main()

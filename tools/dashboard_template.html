@@ -3,7 +3,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: sticky top bar with tabs; each tab is a view. Overview = what to make next + what exists. */
+/* Layout: sticky top bar with tabs; each tab is a view. Content comes from data.json (rebuilt by
+   tools/build_dashboard.py); edits you make here (status, prompt overrides, notes, posted, views)
+   are saved in the dashboard's database and survive every rebuild. */
 :root{
   --bg:#f3f3f0; --surface:#ffffff; --sunk:#ebebe6; --ink:#1c1b18; --muted:#66645d; --line:#deddd6;
   --accent:#dd7420; --accent-ink:#ffffff; --green:#24a33a; --ok:#2c8a56; --warn:#b97a12; --crit:#c8433a;
@@ -30,14 +32,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 h1{font:800 26px/1.1 var(--display);letter-spacing:-.02em;margin:0}
 .brand p{margin:0;color:var(--muted);font-size:14px}
+.sync{margin-left:auto;font-size:12px;color:var(--muted)}
 nav{display:flex;gap:2px;overflow-x:auto;margin-top:12px;scrollbar-width:none}
 nav a{white-space:nowrap;padding:9px 12px;color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;border-bottom:2px solid transparent}
 nav a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
-nav a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav .n{font:500 11px var(--mono);color:var(--muted);margin-left:4px}
 h2{font:700 20px/1.2 var(--display);letter-spacing:-.01em;margin:28px 0 12px;text-wrap:balance}
 h3{font:700 16px/1.25 var(--body);margin:0}
-.lede{color:var(--muted);margin:-6px 0 14px;max-width:70ch}
+.lede{color:var(--muted);margin:-6px 0 14px;max-width:72ch}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:20px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
 .kpi b{display:block;font:800 30px/1 var(--display);font-variant-numeric:tabular-nums}
@@ -45,16 +48,41 @@ h3{font:700 16px/1.25 var(--body);margin:0}
 .kpi.alert b{color:var(--crit)}
 .two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}
 .list{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 14px;border-top:1px solid var(--line)}
-.row:first-child{border-top:0}
-.row p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.item{border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item>summary{list-style:none;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 14px;cursor:pointer}
+.item>summary::-webkit-details-marker{display:none}
+.item>summary:hover{background:var(--sunk)}
+.item[open]>summary{background:var(--sunk)}
+.item p.why{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.chev{font-size:12px;color:var(--muted);margin-left:6px}
+.right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .pill{display:inline-block;font:600 11.5px/1 var(--body);padding:5px 8px;border-radius:99px;white-space:nowrap;letter-spacing:.01em}
 .p-first{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
 .p-green{background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--green)}
 .p-up{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
 .p-nice{background:var(--sunk);color:var(--muted)}
+.s-todo{background:var(--sunk);color:var(--muted)}
+.s-gen{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.s-redo{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
+.s-done{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
 .swatch{width:12px;height:12px;border-radius:3px;margin-top:5px}
 .need{font:500 12px var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.panel{padding:4px 14px 16px 38px;display:grid;gap:14px}
+.ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:var(--muted)}
+select,textarea,input[type=number]{font:14px/1.45 var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+textarea{width:100%;resize:vertical}
+textarea.prompt{font:12.5px/1.5 var(--mono);min-height:320px}
+.btn{font:600 13px var(--body);border-radius:8px;padding:7px 12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:default}
+.hint{font-size:12.5px;color:var(--muted)}
+.edited{font:600 11px var(--body);color:var(--accent)}
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.refs a{display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:12px;text-decoration:none}
+.refs img{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;background:var(--sunk);border:1px solid var(--line)}
+.refs img.wide{aspect-ratio:4/3}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .reel{display:flex;flex-direction:column;gap:8px;min-width:0}
 .reel video,.clip video{width:100%;aspect-ratio:9/16;max-width:100%;border-radius:10px;background:var(--sunk);display:block;object-fit:cover}
@@ -65,6 +93,9 @@ h3{font:700 16px/1.25 var(--body);margin:0}
 .tag{font:700 11px var(--body);text-transform:uppercase;letter-spacing:.05em;color:var(--c)}
 .hook{font-weight:700;line-height:1.3}
 .punch{font-weight:600;color:var(--accent)}
+.track{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding-top:6px;border-top:1px dashed var(--line)}
+.track input[type=number]{width:84px;padding:4px 6px}
+.track textarea{font-size:12.5px;padding:5px 7px;min-height:34px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
 .chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 12px;font:600 13px var(--body);cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -73,8 +104,8 @@ h3{font:700 16px/1.25 var(--body);margin:0}
 .facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13.5px;margin:10px 0}
 .facts dt{color:var(--muted)}
 .facts dd{margin:0}
-details{margin-top:8px}
-summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details.tlx{margin-top:8px}
+details.tlx summary{cursor:pointer;font-weight:600;color:var(--accent)}
 .sheet{width:100%;border-radius:8px;margin:10px 0;display:block}
 .tl{width:100%;border-collapse:collapse;font-size:13px}
 .tl td{padding:4px 8px 4px 0;border-top:1px solid var(--line);vertical-align:top}
@@ -87,7 +118,7 @@ summary{cursor:pointer;font-weight:600;color:var(--accent)}
 .spec ul{margin:6px 0 0;padding-left:18px}
 .spec li{margin:3px 0}
 .plan{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
-.plan th{text-align:left;font:600 12px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 10px;border-bottom:1px solid var(--line)}
+.plan th{text-align:left;font:600 12px var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px;border-bottom:1px solid var(--line)}
 .plan td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
 .plan td.d{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
 .st-made{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
@@ -95,6 +126,7 @@ summary{cursor:pointer;font-weight:600;color:var(--accent)}
 .st-need{background:color-mix(in srgb,var(--crit) 14%,transparent);color:var(--crit)}
 .empty{color:var(--muted);padding:30px 0}
 .badges{display:flex;gap:6px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:600;font-size:13px;padding:8px 14px;border-radius:99px;z-index:20}
 @media (max-width:760px){
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .two{grid-template-columns:minmax(0,1fr)}
@@ -102,90 +134,155 @@ summary{cursor:pointer;font-weight:600;color:var(--accent)}
   .clip video{max-width:260px}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .plan .hide-s{display:none}
+  .panel{padding-left:14px}
+  .item>summary,a.item{grid-template-columns:auto minmax(0,1fr)!important}
+  .item .right{grid-column:2;flex-direction:row;align-items:center;flex-wrap:wrap}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><h1>Keep Reel Studio</h1><p>Hamster reels for Keep – Photo &amp; Video Cleaner</p></div>
+    <div class="brand"><h1>Keep Reel Studio</h1><p>Hamster reels for Keep – Photo &amp; Video Cleaner</p><span class="sync" id="sync">Loading…</span></div>
     <nav id="nav" aria-label="Sections"></nav>
   </header>
-  <main id="view"></main>
+  <main id="view"><p class="empty">Loading the studio…</p></main>
 </div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-const DATA = __DATA__;
-const P = DATA.pillars;
+// ---------- state ----------
+let DATA = null;                 // from data.json
+let EDITS = {clips:{}, reels:{}}; // from the dashboard database
+let db = null, canWrite = false;
+let reelFilter = "all", planFilter = "all";
+const openItems = new Set();
+
+const STATUS = [["todo","To do","s-todo"],["generating","Generating","s-gen"],["redo","Needs a redo","s-redo"],["done","Done","s-done"]];
+const NEED_KEY = {"sideeye":"sideeye","crying":"crying","panic":"panic","facepalm":"facepalm","laugh-green":"laugh",
+  "shocked-green":"shocked","angry-green":"angry","sleepy-green":"sleepy","dance-green":"dance"};
+
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 const pretty = n => n.replace(/_/g, " · ").replace(/-/g, " ");
-const clipByName = Object.fromEntries(DATA.clips.map(c => [c.name, c]));
-const VIEWS = [
-  ["overview","Overview"],["reels","Reels",DATA.reels.length],["clips","Base clips",DATA.clips.length],
-  ["to-make","To make",DATA.tomake.length],["backgrounds","Backgrounds",DATA.bgs.length],["plan","30-day plan",DATA.plan.length]
-];
-let reelFilter = "all", planFilter = "all";
+const $ = id => document.getElementById(id);
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,1800); }
 
+// ---------- edits (database) ----------
+const clipEdit = id => EDITS.clips[id] || {};
+const reelEdit = id => EDITS.reels[id] || {};
+const statusOf = id => clipEdit(id).status || "todo";
+const promptOf = t => clipEdit(t.id).prompt || t.prompt;
+
+async function saveEdit(coll, id, patch){
+  if (!db || !canWrite) return;
+  const cur = (coll === "clip_requests" ? EDITS.clips : EDITS.reels)[id] || {};
+  const body = {...cur, ...patch, updatedAt: new Date().toISOString()};
+  for (const k of Object.keys(body)) if (body[k] === null) delete body[k];
+  try { await db.collection(coll).doc(id).set(body); toast("Saved"); }
+  catch(e){ if (e && e.code === "invalid_argument") { canWrite = false; show(); toast("You can view this dashboard but not edit it"); } else toast("Couldn't save. Try again."); }
+}
+
+async function connect(){
+  try { db = await window.claude?.use?.("db"); } catch(e) { db = null; }
+  let user = null; try { user = await window.claude?.use?.("user"); } catch(e) {}
+  if (!db){ $("sync").textContent = "Edits unavailable here"; return; }
+  const w = user ? await user.can("data.write") : null;
+  canWrite = w !== false;
+  $("sync").textContent = canWrite ? "Edits save automatically" : "View only";
+  let loaded = 0; const timer = setTimeout(() => { if (loaded < 2) $("sync").textContent = "Saved edits can't be reached yet"; }, 10000);
+  const sub = (coll, key) => db.collection(coll).onSnapshot(snap => {
+    const m = {}; snap.docs.forEach(d => { if (d.exists) m[d.id] = d.data(); });
+    EDITS[key] = m; if (!snap.metadata.fromCache && ++loaded >= 2) clearTimeout(timer);
+    if (!isTyping()) show();
+  }, () => { clearTimeout(timer); $("sync").textContent = "Saved edits unavailable"; });
+  sub("clip_requests", "clips"); sub("reel_tracking", "reels");
+}
+const isTyping = () => { const a = document.activeElement; return a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT"); };
+
+// ---------- views ----------
+function views(){ return [
+  ["overview","Overview"],["reels","Reels",DATA.reels.length],["clips","Base clips",DATA.clips.length],
+  ["to-make","To make",DATA.tomake.filter(t=>statusOf(t.id)!=="done").length],["backgrounds","Backgrounds",DATA.bgs.length],["plan","30-day plan",DATA.plan.length]]; }
 function nav(cur){
-  document.getElementById("nav").innerHTML = VIEWS.map(([k,l,n]) =>
-    `<a href="#${k}" ${k===cur?'aria-current="page"':""}>${l}${n!=null?`<span class="n">${n}</span>`:""}</a>`).join("");
+  $("nav").innerHTML = views().map(([k,l,n]) => `<a href="#${k}" ${k===cur?'aria-current="page"':""}>${l}${n!=null?`<span class="n">${n}</span>`:""}</a>`).join("");
 }
-function video(src, poster){
-  return `<video controls playsinline preload="none" poster="${poster}" src="${src}"></video>`;
-}
+const video = (src, poster) => `<video controls playsinline preload="none" poster="${poster}" src="${src}"></video>`;
+const P = () => DATA.pillars;
+
 function reelCard(r){
+  const e = reelEdit(r.num);
+  const track = db ? `<div class="track">
+      <label><input type="checkbox" data-posted="${r.num}" ${e.posted?"checked":""} ${canWrite?"":"disabled"}> Posted</label>
+      <label>Views <input type="number" min="0" inputmode="numeric" id="views-${r.num}" data-views="${r.num}" value="${e.views ?? ""}" ${canWrite?"":"disabled"}></label>
+      <textarea id="rnote-${r.num}" data-rnote="${r.num}" rows="1" placeholder="Notes" ${canWrite?"":"disabled"}>${esc(e.notes||"")}</textarea>
+    </div>` : "";
   return `<article class="reel" style="--c:var(--${r.pillar})">
     ${video(`media/reels/${r.file}.mp4`, `media/posters/${r.file}.jpg`)}
-    <div class="tagline"><span class="num">#${r.num}</span><span class="tag">${esc(P[r.pillar])}</span></div>
+    <div class="tagline"><span class="num">#${r.num}</span><span class="tag">${esc(P()[r.pillar])}</span>${e.posted?'<span class="pill s-done">Posted</span>':""}</div>
     <div class="hook">${esc(r.hook)}</div>
     ${r.punch?`<div class="punch">→ ${esc(r.punch)}</div>`:""}
     <div class="meta"><span>Hamster: <b>${esc(pretty(r.clip))}</b></span><span>Background: <b>${esc(r.bgname)}</b></span></div>
+    ${track}
   </article>`;
 }
 function priorityPill(p){
   const cls = p==="Make first"?"p-first":p==="Remake on green"?"p-green":p.startsWith("Upload")?"p-up":"p-nice";
   return `<span class="pill ${cls}">${esc(p)}</span>`;
 }
-function needCount(name){
-  const map = {"Side-eye / suspicious":"sideeye","Crying":"crying","Panic, fast swiping":"panic","Facepalm":"facepalm",
-    "Laughing (green)":"laugh","Shocked (green)":"shocked","Angry → gives up (green, full body)":"angry",
-    "Sleepy → wide awake (green)":"sleepy","Dance (green)":"dance"};
-  const k = map[name]; return k ? (DATA.emotion_need[k]||0) : 0;
-}
-function toMakeRows(items){
-  return items.map(t => `<div class="row">
-      <span class="swatch" style="background:${t.kind==="new"?"var(--crit)":t.kind==="green"?"var(--green)":"var(--line)"}"></span>
-      <div><h3>${esc(t.name)}</h3><p>${esc(t.why)}</p></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${priorityPill(t.priority)}
-        ${needCount(t.name)?`<span class="need">${needCount(t.name)} planned reels</span>`:""}</div>
-    </div>`).join("");
+function statusPill(id){ const [k,l,c] = STATUS.find(s => s[0]===statusOf(id)); return `<span class="pill ${c}">${l}</span>`; }
+const needCount = t => NEED_KEY[t.id] ? (DATA.emotion_need[NEED_KEY[t.id]]||0) : 0;
+
+function toMakeItem(t, full){
+  const e = clipEdit(t.id), edited = !!e.prompt, dis = canWrite ? "" : "disabled";
+  const panel = full ? `<div class="panel">
+      <div class="ctrls">
+        <label class="f" for="st-${t.id}">Status<select id="st-${t.id}" data-status="${t.id}" ${dis}>${STATUS.map(([k,l]) => `<option value="${k}" ${statusOf(t.id)===k?"selected":""}>${l}</option>`).join("")}</select></label>
+        <span class="hint">Save the result as <span class="num">base-clips/${esc(t.file)}</span> · beat at ${esc(t.beat)}</span>
+      </div>
+      <div>
+        <div class="ctrls" style="justify-content:space-between;margin-bottom:6px">
+          <span style="font-weight:700">10-second prompt ${edited?'<span class="edited">· your edit</span>':""}</span>
+          <span class="ctrls"><button class="btn primary" data-copy="${t.id}">Copy prompt</button>
+          ${db?`<button class="btn" data-save="${t.id}" ${dis}>Save edits</button><button class="btn" data-reset="${t.id}" ${edited&&canWrite?"":"disabled"}>Reset to default</button>`:""}</span>
+        </div>
+        <textarea class="prompt" id="pr-${t.id}" ${db&&canWrite?"":"readonly"}>${esc(promptOf(t))}</textarea>
+      </div>
+      <div><div style="font-weight:700;margin-bottom:6px">Reference images <span class="hint">· attach all of them to the generator</span></div>
+        <div class="refs">${DATA.refs.map(r => `<a href="media/ref/${r.file}" target="_blank" rel="noopener"><img loading="lazy" class="${/closeup/.test(r.file)?"wide":""}" src="media/ref/${r.file}" alt="${esc(r.caption)}"><span>${esc(r.caption)}</span></a>`).join("")}</div></div>
+      ${db?`<label class="f" for="nt-${t.id}">Notes<textarea id="nt-${t.id}" data-note="${t.id}" rows="2" placeholder="Which generator, what went wrong, links…" ${dis}>${esc(e.notes||"")}</textarea></label>`:""}
+    </div>` : "";
+  const head = `<span class="swatch" style="background:${t.kind==="new"?"var(--crit)":t.kind==="green"?"var(--green)":"var(--line)"}"></span>
+      <div><h3>${esc(t.name)}<span class="chev">${full?(openItems.has(t.id)?"▲":"▼"):"→"}</span></h3><p class="why">${esc(t.why)}</p></div>
+      <div class="right"><span class="badges">${statusPill(t.id)}${priorityPill(t.priority)}</span>${needCount(t)?`<span class="need">${needCount(t)} planned reels</span>`:""}</div>`;
+  if (!full) return `<a class="item" href="#to-make" data-goto="${t.id}" style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding:12px 14px;color:inherit;text-decoration:none">${head}</a>`;
+  return `<details class="item" data-item="${t.id}" ${openItems.has(t.id)?"open":""}><summary>${head}</summary>${panel}</details>`;
 }
 
 const render = {
   overview(){
     const planMade = DATA.plan.filter(p => p.made.length).length;
     const blocked = DATA.plan.filter(p => p.new).length;
-    const first = DATA.tomake.filter(t => t.priority==="Make first").length;
-    const latest = DATA.reels.slice(-6).reverse();
+    const open = DATA.tomake.filter(t => statusOf(t.id)!=="done");
+    const posted = DATA.reels.filter(r => reelEdit(r.num).posted).length;
     return `<div class="kpis">
-        <div class="kpi"><b>${DATA.reels.length}</b><span>reels made</span></div>
+        <div class="kpi"><b>${DATA.reels.length}</b><span>reels made${db?` · ${posted} posted`:""}</span></div>
         <div class="kpi"><b>${DATA.clips.length}</b><span>base clips · ${DATA.clips.filter(c=>c.bgtype==="green").length} on green</span></div>
         <div class="kpi"><b>${planMade}<small style="font-size:16px;color:var(--muted)"> / ${DATA.plan.length}</small></b><span>plan ideas already made</span></div>
-        <div class="kpi alert"><b>${blocked}</b><span>planned reels waiting on ${first} missing emotions</span></div>
+        <div class="kpi alert"><b>${blocked}</b><span>planned reels waiting on missing emotions</span></div>
       </div>
       <div class="two">
         <section><h2>Base clips to make next</h2>
-          <p class="lede">Green screen, full body, reaction at about 4–5 s. Details in <a href="#to-make" style="color:var(--accent)">To make</a>.</p>
-          <div class="list">${toMakeRows(DATA.tomake.filter(t=>t.kind!=="variation"))}</div></section>
+          <p class="lede">Tap one to get its 10-second prompt and reference images.</p>
+          <div class="list">${open.filter(t=>t.kind!=="variation").map(t => toMakeItem(t,false)).join("") || '<p class="empty" style="padding:14px">All done.</p>'}</div></section>
         <section><h2>Latest reels</h2><p class="lede">Previews at phone quality. Full-quality files are in the repo's reels/ folder.</p>
-          <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${latest.map(reelCard).join("")}</div></section>
+          <div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${DATA.reels.slice(-4).reverse().map(reelCard).join("")}</div></section>
       </div>`;
   },
   reels(){
-    const opts = [["all","All"], ...Object.entries(P).filter(([k]) => DATA.reels.some(r=>r.pillar===k)), ["cutout","New background"], ["original","Original scene"]];
-    const show = r => reelFilter==="all" || r.pillar===reelFilter || (reelFilter==="cutout" && r.bg) || (reelFilter==="original" && !r.bg);
+    const opts = [["all","All"], ...Object.entries(P()).filter(([k]) => DATA.reels.some(r=>r.pillar===k)), ["cutout","New background"], ["original","Original scene"]].concat(db?[["unposted","Not posted"]]:[]);
+    const show = r => reelFilter==="all" || r.pillar===reelFilter || (reelFilter==="cutout" && r.bg) || (reelFilter==="original" && !r.bg) || (reelFilter==="unposted" && !reelEdit(r.num).posted);
     const rs = DATA.reels.filter(show);
-    return `<h2>Reels</h2>
+    return `<h2>Reels</h2>${db?'<p class="lede">Tick Posted and add the view count after posting, so we can see which jokes work.</p>':""}
       <div class="chips">${opts.map(([k,l]) => `<button class="chip" data-rf="${k}" aria-pressed="${reelFilter===k}">${l}</button>`).join("")}</div>
       ${rs.length?`<div class="grid">${rs.map(reelCard).join("")}</div>`:'<p class="empty">No reels match this filter.</p>'}`;
   },
@@ -200,7 +297,7 @@ const render = {
           <p style="margin:4px 0 0">${esc(c.summary)}</p>
           <dl class="facts"><dt>Beat</dt><dd>${esc(c.beat)}</dd><dt>Cutout</dt><dd>${esc(c.cutout)}</dd>
             <dt>Framing</dt><dd>${esc(c.framing)}</dd><dt>Good for</dt><dd>${esc(c.use)}</dd></dl>
-          <details><summary>Timeline, every 0.5 s</summary>
+          <details class="tlx"><summary>Timeline, every 0.5 s</summary>
             <div class="scroll"><img class="sheet" loading="lazy" src="media/sheets/${c.name}.jpg" alt="Frames of ${esc(c.name)} every half second" style="min-width:560px"></div>
             <table class="tl">${c.rows.map(([t,d]) => `<tr><td>${t}s</td><td>${esc(d).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}</td></tr>`).join("")}</table>
           </details>
@@ -208,16 +305,14 @@ const render = {
   },
   "to-make"(){
     const groups = ["Make first","Remake on green","Upload if you have it","Nice to have"];
-    return `<h2>Base clips to make</h2><p class="lede">${DATA.plan.filter(p=>p.new).length} of the ${DATA.plan.length} planned reels can't be made until the first four exist. Remaking the most-used emotions on green removes the slow cutout and the edge flicker.</p>
-      ${groups.map(g => { const items = DATA.tomake.filter(t=>t.priority===g); return items.length?`<h2 style="font-size:16px;margin-top:20px">${g}</h2><div class="list">${toMakeRows(items)}</div>`:""; }).join("")}
-      <h2>How to shoot them</h2>
+    return `<h2>Base clips to make</h2><p class="lede">Open a clip for its 10-second prompt and the reference images. Every prompt shares one character description, so the hamster, the cap logo and the “Keep” shirt stay the same in every clip.${db&&canWrite?" Edit a prompt and press Save edits to keep your version; Reset brings back the default.":""}</p>
+      ${groups.map(g => { const items = DATA.tomake.filter(t=>t.priority===g); return items.length?`<h2 style="font-size:16px;margin-top:20px">${g}</h2><div class="list">${items.map(t=>toMakeItem(t,true)).join("")}</div>`:""; }).join("")}
+      <h2>Checklist for every clip</h2>
       <div class="spec"><ul>
-        <li>Flat, evenly lit bright green background and floor (about #00FF00). No shadows on the green.</li>
-        <li>Full body, same size and position as the strut clip, with a little gap at the edges.</li>
-        <li>Same outfit: black cap with the photo logo, black tee that says “Keep”.</li>
-        <li>About 10 seconds. A clear reaction (the beat) at roughly 4–5 s, then hold it.</li>
-        <li>Little or no motion blur, so fast moves stay sharp.</li>
-        <li>Upload to the repo's <b>base-clips/</b> folder, named like <span class="num">green_crying_fullbody.mp4</span>.</li>
+        <li>Attach all six reference images; generate at 9:16, 10 seconds.</li>
+        <li>Check the cap logo (two stacked photo frames, red heart) and the white “Keep” on the shirt before keeping a take.</li>
+        <li>Green must be flat with no shadows; the hamster must not touch the frame edges.</li>
+        <li>Upload to the repo's <b>base-clips/</b> folder with the suggested name, then set the status to Done.</li>
       </ul></div>`;
   },
   backgrounds(){
@@ -230,29 +325,55 @@ const render = {
       </article>`).join("")}</div>`;
   },
   plan(){
-    const opts = [["all","All"], ...Object.entries(P), ["made","Made"], ["need","Needs a new clip"]];
+    const opts = [["all","All"], ...Object.entries(P()), ["made","Made"], ["need","Needs a new clip"]];
     const show = p => planFilter==="all" || p.pillar===planFilter || (planFilter==="made" && p.made.length) || (planFilter==="need" && p.new);
     const rows = DATA.plan.filter(show);
     const status = p => p.made.length ? `<span class="pill st-made">Made · #${p.made.map(m=>m.split("_")[2]).join(", #")}</span>`
       : p.new ? `<span class="pill st-need">Needs ${esc(p.emotion)} clip</span>` : `<span class="pill st-ready">Ready to make</span>`;
-    return `<h2>30-day plan</h2><p class="lede">5 reels a day, one per topic. The full checklist (with ticks) is plan/keep-30-day-reels.html in the repo.</p>
+    return `<h2>30-day plan</h2><p class="lede">5 reels a day, one per topic. The full checklist is plan/keep-30-day-reels.html in the repo.</p>
       <div class="chips">${opts.map(([k,l]) => `<button class="chip" data-pf="${k}" aria-pressed="${planFilter===k}">${l}</button>`).join("")}</div>
       <div class="scroll"><table class="plan"><thead><tr><th>Day</th><th>Reel</th><th class="hide-s">Hamster</th><th>Status</th></tr></thead><tbody>
       ${rows.map(p => `<tr style="--c:var(--${p.pillar})"><td class="d">D${String(p.day).padStart(2,"0")}</td>
-        <td><span class="tag">${esc(P[p.pillar])}</span><div class="hook" style="font-weight:600">${esc(p.hook)}</div>${p.punch?`<div class="punch" style="font-size:13px">→ ${esc(p.punch)}</div>`:""}</td>
+        <td><span class="tag">${esc(P()[p.pillar])}</span><div class="hook" style="font-weight:600">${esc(p.hook)}</div>${p.punch?`<div class="punch" style="font-size:13px">→ ${esc(p.punch)}</div>`:""}</td>
         <td class="hide-s">${esc(p.emotion)}</td><td>${status(p)}</td></tr>`).join("")}
       </tbody></table></div>`;
   },
 };
 
+// ---------- wiring ----------
+function current(){ const k = location.hash.slice(1); return render[k] ? k : "overview"; }
 function show(){
-  let k = location.hash.slice(1);
-  if (!render[k]) k = "overview";
+  if (!DATA) return;
+  const k = current(), y = window.scrollY;
   nav(k);
-  document.getElementById("view").innerHTML = render[k]();
+  $("view").innerHTML = render[k]();
+  window.scrollTo(0, y);
   document.querySelectorAll("[data-rf]").forEach(b => b.onclick = () => { reelFilter = b.dataset.rf; show(); });
   document.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => { planFilter = b.dataset.pf; show(); });
+  document.querySelectorAll("[data-goto]").forEach(a => a.onclick = () => { openItems.add(a.dataset.goto); });
+  document.querySelectorAll("details[data-item]").forEach(d => d.ontoggle = () => {
+    d.open ? openItems.add(d.dataset.item) : openItems.delete(d.dataset.item);
+    const ch = d.querySelector(".chev"); if (ch) ch.textContent = d.open ? "▲" : "▼";
+  });
+  document.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+    const ta = $("pr-" + b.dataset.copy);
+    try { await navigator.clipboard.writeText(ta.value); toast("Prompt copied"); }
+    catch(e){ ta.focus(); ta.select(); toast("Selected. Press Ctrl/Cmd+C to copy"); }
+  });
+  document.querySelectorAll("[data-save]").forEach(b => b.onclick = () => {
+    const id = b.dataset.save, t = DATA.tomake.find(x => x.id === id), v = $("pr-" + id).value;
+    saveEdit("clip_requests", id, {prompt: v.trim() === t.prompt.trim() ? null : v});
+  });
+  document.querySelectorAll("[data-reset]").forEach(b => b.onclick = () => saveEdit("clip_requests", b.dataset.reset, {prompt: null}));
+  document.querySelectorAll("[data-status]").forEach(s => s.onchange = () => saveEdit("clip_requests", s.dataset.status, {status: s.value}));
+  document.querySelectorAll("[data-note]").forEach(n => n.onchange = () => saveEdit("clip_requests", n.dataset.note, {notes: n.value}));
+  document.querySelectorAll("[data-posted]").forEach(c => c.onchange = () => saveEdit("reel_tracking", c.dataset.posted, {posted: c.checked}));
+  document.querySelectorAll("[data-views]").forEach(i => i.onchange = () => saveEdit("reel_tracking", i.dataset.views, {views: i.value === "" ? null : Number(i.value)}));
+  document.querySelectorAll("[data-rnote]").forEach(n => n.onchange = () => saveEdit("reel_tracking", n.dataset.rnote, {notes: n.value}));
 }
 window.addEventListener("hashchange", () => { show(); window.scrollTo(0,0); });
-show();
+document.addEventListener("focusout", () => setTimeout(() => { if (!isTyping()) show(); }, 0));
+
+fetch("data.json").then(r => r.json()).then(d => { DATA = d; show(); connect(); })
+  .catch(() => { $("view").innerHTML = '<p class="empty">Couldn\'t load the studio data. Reload the page to try again.</p>'; });
 </script>

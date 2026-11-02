@@ -42,4 +42,12 @@ When a new clip is added: extract the 0.5 s frames and contact sheet, look at th
 ## Dashboard
 
 Keep Reel Studio (private Claude artifact): https://claude.ai/artifact/KEecvdKom8eMHBBMWVd4bq
-Shows reels, base clips with timelines, backgrounds, the 30-day plan and the base clips still to make. Rebuild after each batch: make 540px previews into `<dash>/media/…`, run `python3 -I tools/build_dashboard.py <dash>`, then republish to the same URL (add new reels to `REELS` in `tools/build_dashboard.py`).
+
+- The page is a fixed template (`tools/dashboard_template.html`) that loads `data.json`.
+- `tools/build_dashboard.py <dash>` rebuilds `data.json` from: `REELS`/`BG` in that script, `plan/ideas.py` (30-day plan), `plan/clip_prompts.py` (clips to make + generator prompts) and `tools/write_timelines.py` (clip timelines). It expects 540px preview media in `<dash>/media/`.
+- Edits made on the page (clip status, prompt overrides, notes, posted, views) are stored in the artifact's database (collections `clip_requests` and `reel_tracking`), so rebuilding never overwrites them. Read them with the ArtifactData tool before planning the next batch.
+- Republish to the same URL after each batch.
+
+## Generator prompts and references
+
+`plan/clip_prompts.py` holds one shared CHARACTER / SETUP / AVOID block plus a 10-second action timeline per clip. `base-clips/reference/` holds the six reference images (front, side, back, holding phone, cap-logo and shirt close-ups) to attach to every generation.
