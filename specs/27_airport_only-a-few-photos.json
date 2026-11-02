@@ -19,7 +19,7 @@
       "y": 250,
       "style": "outline",
       "size": 60,
-      "align": "left",
+      "align": "center",
       "x": 70,
       "maxw": 840
     },
@@ -29,7 +29,7 @@
       "y": null,
       "style": "box",
       "size": 54,
-      "align": "left",
+      "align": "center",
       "x": 70,
       "maxw": 840
     },
@@ -39,7 +39,7 @@
       "y": null,
       "style": "box",
       "size": 54,
-      "align": "left",
+      "align": "center",
       "x": 70,
       "maxw": 840
     }
