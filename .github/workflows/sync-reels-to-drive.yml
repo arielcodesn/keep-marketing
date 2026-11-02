@@ -1,0 +1,25 @@
+# Copies everything in reels/ into Google Drive → Keep - Marketing → "Hamster Reels - Ready to Post"
+# whenever reels change on main. Needs one repo secret: RCLONE_CONFIG (see README).
+name: Sync reels to Google Drive
+
+on:
+  push:
+    branches: [main]
+    paths: ["reels/**"]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: Write rclone config
+        run: |
+          mkdir -p ~/.config/rclone
+          printf '%s\n' "$RCLONE_CONFIG" > ~/.config/rclone/rclone.conf
+        env:
+          RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
+      - name: Copy new reels to Drive (never deletes anything in Drive)
+        run: rclone copy reels/ gdrive: --include "*.mp4" --drive-root-folder-id 1-kAPfONXJ7paisrWYULXpJCqY00_4QRZ -v
