@@ -184,6 +184,40 @@ def ground_shadow(a, strength=0.55):
     d.ellipse([cx - half_w * 0.6, bottom - half_w * 0.07, cx + half_w * 0.6, bottom + half_w * 0.07], fill=int(255 * min(1, strength * 1.5)))
     return sh.filter(ImageFilter.GaussianBlur(14))
 
+def contact_shadow(a, strength=0.6, light_dx=0.12):
+    """Ground shadow shaped like the characters: the silhouette squashed onto the floor
+    (offset by light_dx so the light comes from one side) plus a tight dark contact under the feet."""
+    A = np.asarray(a); rows = np.where((A > 128).sum(axis=1) > 8)[0]
+    if len(rows) == 0:
+        return Image.new("L", (W, H), 0)
+    top, bottom = rows.min(), rows.max()
+    if bottom >= H - 4:
+        return a.filter(ImageFilter.GaussianBlur(28)).point(lambda v: int(v * 0.35))
+    sil = a.crop((0, top, W, bottom + 1))
+    h = max(20, int((bottom - top) * 0.16))
+    squash = sil.resize((W, h), Image.BILINEAR).transpose(Image.FLIP_TOP_BOTTOM)
+    sh = Image.new("L", (W, H), 0)
+    sh.paste(squash, (int(W * light_dx * 0.3), bottom - int(h * 0.35)))
+    sh = sh.filter(ImageFilter.GaussianBlur(16)).point(lambda v: int(min(255, v * strength)))
+    contact = Image.new("L", (W, H), 0)
+    contact.paste(a.crop((0, bottom - 28, W, bottom + 1)), (0, bottom - 22))
+    contact = contact.filter(ImageFilter.GaussianBlur(9)).point(lambda v: int(min(255, v * min(1, strength * 1.4))))
+    return Image.fromarray(np.maximum(np.asarray(sh), np.asarray(contact)))
+
+def match_colour(fg, a, bg, k=0.28):
+    """Nudge the subject's colour balance toward the background's, so it sits in the scene's light."""
+    A = np.asarray(a) > 128
+    if A.sum() < 100:
+        return fg
+    f = np.asarray(fg).astype(np.float32); b = np.asarray(bg).astype(np.float32)
+    ys, xs = np.where(A); y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
+    region = b[max(0, y0 - 150):min(H, y1 + 150), max(0, x0 - 200):min(W, x1 + 200)].reshape(-1, 3).mean(axis=0)
+    subj = f[A].mean(axis=0)
+    gain = (region / np.maximum(subj, 1)) ** k
+    gain = np.clip(gain / gain.mean(), 0.8, 1.2)          # tint only, keep overall brightness
+    bright = np.clip((region.mean() / max(subj.mean(), 1)) ** (k * 0.5), 0.85, 1.1)
+    return Image.fromarray(np.clip(f * gain * bright, 0, 255).astype(np.uint8))
+
 def composite(spec, base, work):
     frames = os.path.join(work, "frames"); half = os.path.join(work, "half")
     masks = os.path.join(work, "masks"); comp = os.path.join(work, "comp")
@@ -228,17 +262,17 @@ def composite(spec, base, work):
         ch = int(bw * 16 / 9)
         bg = bg.crop((0, (bh - ch) // 2, bw, (bh - ch) // 2 + ch))
     zoom = spec.get("bg_zoom", True)
-    plate = bg.resize((int(W * 1.12), int(H * 1.12)), Image.LANCZOS)
-    plate = plate.filter(ImageFilter.GaussianBlur(spec.get("bg_blur", 2.2)))
-    plate = ImageEnhance.Brightness(plate).enhance(0.92)
+    plate_sharp = ImageEnhance.Brightness(bg.resize((int(W * 1.12), int(H * 1.12)), Image.LANCZOS)).enhance(0.92)
+    plate = plate_sharp.filter(ImageFilter.GaussianBlur(spec.get("bg_blur", 2.2)))
     n = n_total
     for f in names:
         i = int(f[:-4])
         t = (i - 1) / max(1, n - 1)
         s = 1.12 - 0.06 * t if zoom else 1.06
         pw, ph = int(W * s), int(H * s)
-        bgf = plate.resize((pw, ph), Image.BILINEAR).crop(
-            ((pw - W) // 2, (ph - H) // 2, (pw - W) // 2 + W, (ph - H) // 2 + H))
+        box = ((pw - W) // 2, (ph - H) // 2, (pw - W) // 2 + W, (ph - H) // 2 + H)
+        bgf = plate.resize((pw, ph), Image.BILINEAR).crop(box)
+        bgs = plate_sharp.resize((pw, ph), Image.BILINEAR).crop(box)
         if green:
             fg, a = green_key(Image.open(os.path.join(frames, f)).convert("RGB"), spec.get("key_lo", 35), spec.get("key_hi", 95))
         else:
@@ -254,8 +288,18 @@ def composite(spec, base, work):
             fg2.paste(fg.resize((nw, nh), Image.LANCZOS), (px, py))
             a2.paste(a.resize((nw, nh), Image.LANCZOS), (px, py))
             fg, a = fg2, a2
+        if spec.get("ground", True):
+            # depth of field: the floor is sharp where the feet touch it and blurs with distance
+            rows = np.where((np.asarray(a) > 128).sum(axis=1) > 8)[0]
+            if len(rows) and rows.max() < H - 4:
+                fy = rows.max()
+                yy = np.abs(np.arange(H) - fy).astype(np.float32)
+                focus = np.clip(1 - (yy - 120) / 500, 0, 1)      # 1 = sharp within 120px of the feet
+                m = Image.fromarray((focus[:, None] * np.ones((1, W)) * 255).astype(np.uint8))
+                bgf = Image.composite(bgs, bgf, m)
+            fg = match_colour(fg, a, bgf, spec.get("colour_match", 0.28))
         if spec.get("shadow", "ground") == "ground":
-            shadow = ground_shadow(a, spec.get("shadow_strength", 0.55))
+            shadow = contact_shadow(a, spec.get("shadow_strength", 0.6), spec.get("light_dx", 0.12))
         else:  # older soft glow around the whole hamster
             shadow = a.filter(ImageFilter.GaussianBlur(28)).point(lambda v: int(v * 0.45))
         out = Image.composite(Image.new("RGB", (W, H), (10, 12, 25)), bgf, shadow)
