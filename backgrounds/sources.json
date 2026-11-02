@@ -1,5 +1,5 @@
 {
- "note": "Unsplash photos (free under the Unsplash License, commercial use allowed). The 'Fetch stock backgrounds' GitHub Action downloads each one into backgrounds/stock/<name>.jpg whenever this file changes.",
+ "note": "Unsplash photos (v2) (free under the Unsplash License, commercial use allowed). The 'Fetch stock backgrounds' GitHub Action downloads each one into backgrounds/stock/<name>.jpg whenever this file changes.",
  "photos": {
   "airport-gate-a": "Ge_zO-UXwdo", "airport-gate-b": "3aoDO4XmRH0", "airport-gate-c": "KAORnKNOcys",
   "house-party-a": "bscyZhPghTY", "house-party-b": "rNekFxd0ECA", "house-party-c": "FhdC7RGb5Yg",

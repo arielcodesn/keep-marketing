@@ -30,7 +30,11 @@ jobs:
           while read -r name pid; do
             out="backgrounds/stock/$name.jpg"
             if [ -f "$out" ]; then echo "skip $name"; continue; fi
-            curl -sSL --fail -A "Mozilla/5.0" -o /tmp/p "https://unsplash.com/photos/$pid/download?force=true" || { echo "FAILED $name ($pid)"; continue; }
+            UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+            page=$(curl -sSL -A "$UA" "https://unsplash.com/photos/$pid" || true)
+            img=$(printf '%s' "$page" | grep -oE 'https://images\.unsplash\.com/photo-[^"?& ]+' | head -1)
+            if [ -z "$img" ]; then echo "FAILED $name ($pid): no image link on page ($(printf '%s' "$page" | head -c 80 | tr -d '\n'))"; continue; fi
+            curl -sSL --fail -A "$UA" -o /tmp/p "$img?fm=jpg&q=88&w=2400" || { echo "FAILED $name ($pid): image download"; continue; }
             if file /tmp/p | grep -qiE "JPEG|PNG|WebP"; then
               convert /tmp/p -auto-orient -resize "2400x2400>" -quality 88 "$out"
               echo "- $name: https://unsplash.com/photos/$pid" >> backgrounds/stock/CREDITS.md
