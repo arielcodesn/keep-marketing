@@ -1,14 +1,53 @@
 {
  "note": "Unsplash photos, free under the Unsplash License (commercial use allowed). 'image' is the photo's images.unsplash.com address (read from its page); the 'Fetch stock backgrounds' action downloads each into backgrounds/stock/<name>.jpg when this file changes.",
  "photos": {
-  "airport-gate-a": {"page": "https://unsplash.com/photos/Ge_zO-UXwdo", "image": "https://images.unsplash.com/photo-1777458685150-d4a5d94fb1ff"},
-  "airport-gate-b": {"page": "https://unsplash.com/photos/3aoDO4XmRH0", "image": "https://images.unsplash.com/photo-1761588839172-b73b56ebfada"},
-  "house-party-a": {"page": "https://unsplash.com/photos/bscyZhPghTY", "image": "https://images.unsplash.com/photo-1651065698373-f310e3b99326"},
-  "house-party-b": {"page": "https://unsplash.com/photos/rNekFxd0ECA", "image": "https://images.unsplash.com/photo-1714647212045-aaa5cf0b8811"},
-  "bedroom-night-a": {"page": "https://unsplash.com/photos/XhLdjyQQi2I", "image": "https://images.unsplash.com/photo-1766431015004-6cd4c33ae158"},
-  "bedroom-night-b": {"page": "https://unsplash.com/photos/CqVHT8g45R8", "image": "https://images.unsplash.com/photo-1570737209810-87a8e7245f88"},
-  "beach-day-a": {"page": "https://unsplash.com/photos/pAL00n8whQc", "image": "https://images.unsplash.com/photo-1784057098851-b31bb06b66e5"},
-  "city-dusk-a": {"page": "https://unsplash.com/photos/laQwB9ixkyk", "image": "https://images.unsplash.com/photo-1741275263990-eb0064917d02"},
-  "city-dusk-b": {"page": "https://unsplash.com/photos/QWrtDkkfDY0", "image": "https://images.unsplash.com/photo-1757140093464-cb998474f83a"}
+  "airport-gate-a": {
+   "page": "https://unsplash.com/photos/Ge_zO-UXwdo",
+   "image": "https://images.unsplash.com/photo-1777458685150-d4a5d94fb1ff"
+  },
+  "airport-gate-b": {
+   "page": "https://unsplash.com/photos/3aoDO4XmRH0",
+   "image": "https://images.unsplash.com/photo-1761588839172-b73b56ebfada"
+  },
+  "house-party-a": {
+   "page": "https://unsplash.com/photos/bscyZhPghTY",
+   "image": "https://images.unsplash.com/photo-1651065698373-f310e3b99326"
+  },
+  "house-party-b": {
+   "page": "https://unsplash.com/photos/rNekFxd0ECA",
+   "image": "https://images.unsplash.com/photo-1714647212045-aaa5cf0b8811"
+  },
+  "bedroom-night-a": {
+   "page": "https://unsplash.com/photos/XhLdjyQQi2I",
+   "image": "https://images.unsplash.com/photo-1766431015004-6cd4c33ae158"
+  },
+  "bedroom-night-b": {
+   "page": "https://unsplash.com/photos/CqVHT8g45R8",
+   "image": "https://images.unsplash.com/photo-1570737209810-87a8e7245f88"
+  },
+  "beach-day-a": {
+   "page": "https://unsplash.com/photos/pAL00n8whQc",
+   "image": "https://images.unsplash.com/photo-1784057098851-b31bb06b66e5"
+  },
+  "city-dusk-a": {
+   "page": "https://unsplash.com/photos/laQwB9ixkyk",
+   "image": "https://images.unsplash.com/photo-1741275263990-eb0064917d02"
+  },
+  "city-dusk-b": {
+   "page": "https://unsplash.com/photos/QWrtDkkfDY0",
+   "image": "https://images.unsplash.com/photo-1757140093464-cb998474f83a"
+  },
+  "ryokan-a": {
+   "page": "https://unsplash.com/photos/2WaUtK4lU5w",
+   "image": "https://images.unsplash.com/photo-1754668122695-7b32062f339f"
+  },
+  "ryokan-b": {
+   "page": "https://unsplash.com/photos/TeNtfZuCWe8",
+   "image": "https://images.unsplash.com/photo-1764445274404-f2e14fd3f20c"
+  },
+  "ryokan-c": {
+   "page": "https://unsplash.com/photos/YG65N1UBWRA",
+   "image": "https://images.unsplash.com/photo-1749642955698-ebe5e4579034"
+  }
  }
 }
