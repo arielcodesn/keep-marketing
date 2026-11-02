@@ -1,0 +1,37 @@
+{
+  "base": "base-clips/green_couple-phones-swap_fullbody.mp4",
+  "key": "green",
+  "key_lo": 25,
+  "key_hi": 70,
+  "bg_blur": 2.0,
+  "fg_scale": 0.7,
+  "fg_anchor_y": 1243,
+  "fg_offset_x": -40,
+  "shadow_strength": 0.6,
+  "out": "reels/keep_reel_27_airport_only-a-few-photos.mp4",
+  "background": "backgrounds/stock/airport-gate-b.jpg",
+  "bg_focus_x": 0.5,
+  "work": "/tmp/claude-0/-home-claude/1691a066-b71d-519f-82cc-823b9ea3f658/scratchpad/work_27",
+  "layers": [
+    {
+      "text": "Her: \"I'll only take a few photos this trip\" ✈️",
+      "start": 0,
+      "y": 250,
+      "style": "outline",
+      "size": 64,
+      "align": "left",
+      "x": 70,
+      "maxw": 820
+    },
+    {
+      "text": "Her camera roll before we even board: 1,107 📸",
+      "start": 4.5,
+      "y": null,
+      "style": "box",
+      "size": 56,
+      "align": "left",
+      "x": 70,
+      "maxw": 820
+    }
+  ]
+}

@@ -97,7 +97,9 @@ def wrap(text, font, size, maxw):
         lines.append(cur)
     return lines
 
-def render_text(text, y_top, style="outline", size=78, maxw=900):
+def render_text(text, y_top, style="outline", size=78, maxw=900, align="center", x_left=70):
+    """align="left" starts every line at x_left (keeps text clear of IG's right-side buttons)."""
+    xs = (lambda w_: x_left) if align == "left" else (lambda w_: (W - w_) / 2)
     font = ImageFont.truetype(FONT, size)
     lines = wrap(text, font, size, maxw)
     lh = int(size * 1.18)
@@ -107,14 +109,14 @@ def render_text(text, y_top, style="outline", size=78, maxw=900):
     if style == "box":
         pad_x, pad_y = 34, 26
         bw = max(widths) + pad_x * 2
-        x0 = (W - bw) / 2
+        x0 = (x_left - pad_x) if align == "left" else (W - bw) / 2
         ImageDraw.Draw(img).rounded_rectangle(
             [x0, y_top - pad_y, x0 + bw, y_top + block_h + pad_y - 10], radius=22, fill=(0, 0, 0, 235))
     else:
         sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         sd = ImageDraw.Draw(sh)
         for i, l in enumerate(lines):
-            x, y = (W - widths[i]) / 2, y_top + i * lh
+            x, y = xs(widths[i]), y_top + i * lh
             for k, t in tokens(l):
                 if k == "t":
                     sd.text((x + 3, y + 6), t, font=font, fill=(0, 0, 0, 150),
@@ -125,7 +127,7 @@ def render_text(text, y_top, style="outline", size=78, maxw=900):
         img = Image.alpha_composite(img, sh.filter(ImageFilter.GaussianBlur(6)))
     d = ImageDraw.Draw(img)
     for i, l in enumerate(lines):
-        x, y = (W - widths[i]) / 2, y_top + i * lh
+        x, y = xs(widths[i]), y_top + i * lh
         for k, t in tokens(l):
             if k == "t":
                 if style == "box":
@@ -238,16 +240,16 @@ def composite(spec, base, work):
         bgf = plate.resize((pw, ph), Image.BILINEAR).crop(
             ((pw - W) // 2, (ph - H) // 2, (pw - W) // 2 + W, (ph - H) // 2 + H))
         if green:
-            fg, a = green_key(Image.open(os.path.join(frames, f)).convert("RGB"))
+            fg, a = green_key(Image.open(os.path.join(frames, f)).convert("RGB"), spec.get("key_lo", 35), spec.get("key_hi", 95))
         else:
             fg = ImageEnhance.Color(Image.open(os.path.join(frames, f)).convert("RGB")).enhance(0.9)
             a = Image.fromarray(np.clip(alpha(i), 0, 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))
-        fs = spec.get("fg_scale", 1.0)
-        if fs != 1.0:
+        fs, ox = spec.get("fg_scale", 1.0), int(spec.get("fg_offset_x", 0))
+        if fs != 1.0 or ox:
             # shrink the hamster around a ground point (e.g. its feet) so there is room for text above
             ay = spec.get("fg_anchor_y", H)
             nw, nh = int(W * fs), int(H * fs)
-            px, py = int(W / 2 - W / 2 * fs), int(ay - ay * fs)
+            px, py = int(W / 2 - W / 2 * fs) + ox, int(ay - ay * fs)  # ox: shift left/right
             fg2, a2 = Image.new("RGB", (W, H)), Image.new("L", (W, H), 0)
             fg2.paste(fg.resize((nw, nh), Image.LANCZOS), (px, py))
             a2.paste(a.resize((nw, nh), Image.LANCZOS), (px, py))
@@ -282,14 +284,33 @@ def main(spec_path):
             return
     args = ["ffmpeg", "-v", "error", "-y", "-i", base]
     filt, last, bottom = [], "[0:v]", 0
+    fps = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                          "stream=r_frame_rate", "-of", "csv=p=0", base], capture_output=True, text=True).stdout.strip()
+    fpsf = eval(fps) if "/" in fps else float(fps or 24)
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", base],
+                               capture_output=True, text=True).stdout.strip())
     for i, L in enumerate(spec.get("layers", [])):
         style = L.get("style", "outline")
         y = L.get("y")
         if y is None:
             y = bottom + (60 if style == "box" else 30)
-        im, bottom = render_text(L["text"], y, style, L.get("size", 78))
-        png = os.path.join(work, f"text_{i}.png"); im.save(png)
-        args += ["-i", png]
+        opts = dict(maxw=L.get("maxw", 900), align=L.get("align", "center"), x_left=L.get("x", 70))
+        if L.get("type") == "counter":
+            # a number that counts up: "{label}" with {n} replaced by the current value
+            cdir = os.path.join(work, f"counter_{i}"); os.makedirs(cdir, exist_ok=True)
+            a0, a1, s0, s1 = L.get("from", 0), L["to"], L.get("count_start", L.get("start", 0)), L.get("count_end", 8)
+            for k in range(int(dur * fpsf) + 2):
+                t = k / fpsf
+                u = min(1, max(0, (t - s0) / max(1e-6, s1 - s0)))
+                v = a0 + (a1 - a0) * (1 - (1 - u) ** 3)  # ease-out
+                im, b = render_text(L["text"].replace("{n}", f"{int(round(v)):,}"), y, style, L.get("size", 78), **opts)
+                im.save(os.path.join(cdir, f"{k:04d}.png"), compress_level=1)
+            bottom = b
+            args += ["-framerate", fps, "-i", os.path.join(cdir, "%04d.png")]
+        else:
+            im, bottom = render_text(L["text"], y, style, L.get("size", 78), **opts)
+            png = os.path.join(work, f"text_{i}.png"); im.save(png)
+            args += ["-i", png]
         filt.append(f"{last}[{i+1}:v]overlay=0:0:enable='between(t,{L.get('start', 0)},{L.get('end', 999)})'[v{i}]")
         last = f"[v{i}]"
     if filt:
