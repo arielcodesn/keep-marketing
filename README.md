@@ -22,3 +22,13 @@ One-time setup:
 3. Run `rclone config show gdrive` and copy everything it prints, including the `[gdrive]` line.
 4. In this repo: **Settings → Secrets and variables → Actions → New repository secret**, name `RCLONE_CONFIG`, paste, save.
 5. **Actions → Sync reels to Google Drive → Run workflow** to copy the existing reels.
+
+## Making a reel (for Claude)
+
+`tools/reel.py` is the reel template: optional hamster cutout onto a background (exact green-screen key, or AI cutout for non-green clips), IG-style text (Nunito Black outline or black box) with timed pop-ins, feet shadow, optional mute. Each reel is one JSON spec in `specs/`; run from the repo root:
+
+```bash
+python3 -I tools/reel.py specs/19_pier_vacation-1-2gb-left.json
+```
+
+Setup per machine: ffmpeg, Pillow, numpy, Noto Color Emoji; `npm pack @fontsource/nunito@5.3.0` unpacked in `~/fonts`; for non-green clips also `npm install @imgly/background-removal-node@1.4.5` in `~/bgr`.

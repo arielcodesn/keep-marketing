@@ -1,0 +1,22 @@
+{
+  "base": "base-clips/green_strut-turn_fullbody.mp4",
+  "out": "reels/keep_reel_19_pier_vacation-1-2gb-left.mp4",
+  "background": "backgrounds/pier-sunset.jpg",
+  "key": "green",
+  "bg_focus_x": 0.5,
+  "bg_blur": 2.0,
+  "fg_scale": 0.75,
+  "fg_anchor_y": 1640,
+  "mute": true,
+  "work": "/tmp/work_19",
+  "layers": [
+    {
+      "text": "Me walking into a 2-week vacation with 1.2 GB of storage left like it's enough 🧳",
+      "start": 0,
+      "y": 270,
+      "style": "outline",
+      "size": 72
+    }
+  ],
+  "shadow_strength": 0.7
+}
